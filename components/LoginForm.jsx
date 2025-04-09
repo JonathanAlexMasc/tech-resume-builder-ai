@@ -1,37 +1,52 @@
+import { Menu, Transition, MenuButton, MenuItems } from "@headlessui/react";
+import { Fragment } from "react";
+import { FaUser, FaGoogle, FaGithub } from "react-icons/fa";
 import { loginAction } from "@/app/actions";
-import { FaGoogle, FaGithub } from "react-icons/fa";
 
-const LoginForm = () => {
+const LoginDropdown = () => {
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900">
-      <form
-        action={loginAction}
-        className="w-full max-w-md bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-2xl shadow-lg p-8 flex flex-col gap-6"
+    <Menu as="div" className="relative inline-block text-left">
+      <div>
+        <MenuButton className="inline-flex items-center gap-2 text-sm text-gray-800 dark:text-white px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+          <FaUser className="w-4 h-4" />
+          Login
+        </MenuButton>
+      </div>
+
+      <Transition
+        as={Fragment}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
       >
-        <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white">Sign In</h2>
-
-        <button
-          type="submit"
-          name="action"
-          value="google"
-          className="flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-6 border border-gray-300 rounded-lg shadow transition duration-200"
-        >
-          <FaGoogle className="w-5 h-5" />
-          Sign in with Google
-        </button>
-
-        <button
-          type="submit"
-          name="action"
-          value="github"
-          className="flex items-center justify-center gap-3 bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 px-6 rounded-lg shadow transition duration-200"
-        >
-          <FaGithub className="w-5 h-5" />
-          Sign in with GitHub
-        </button>
-      </form>
-    </div>
+        <MenuItems className="absolute right-0 z-10 mt-2 w-64 origin-top-right rounded-md bg-white dark:bg-gray-900 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-4">
+          <form action={loginAction} className="flex flex-col gap-3">
+            <button
+              type="submit"
+              name="action"
+              value="google"
+              className="flex items-center gap-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-800 dark:text-white font-medium py-2 px-4 border border-gray-300 dark:border-gray-700 rounded-md transition"
+            >
+              <FaGoogle className="w-4 h-4" />
+              Sign in with Google
+            </button>
+            <button
+              type="submit"
+              name="action"
+              value="github"
+              className="flex items-center gap-3 bg-gray-800 hover:bg-gray-900 text-white font-medium py-2 px-4 rounded-md transition"
+            >
+              <FaGithub className="w-4 h-4" />
+              Sign in with GitHub
+            </button>
+          </form>
+        </MenuItems>
+      </Transition>
+    </Menu>
   );
 };
 
-export default LoginForm;
+export default LoginDropdown;

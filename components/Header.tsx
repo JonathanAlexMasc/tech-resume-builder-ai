@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ThemeSwitch from "./ThemeSwitch";
 import React from "react";
+import LoginDropdown from "./LoginForm";
 
 export default function Header() {
   return (
@@ -11,21 +12,9 @@ export default function Header() {
         </div>
         <nav className="flex items-center">
           <ul className="flex space-x-2 mr-2">
+            
             <li>
-              <Link
-                href="/"
-                className="text-sm text-gray-800 dark:text-white px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              >
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/login"
-                className="text-sm text-gray-800 dark:text-white px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              >
-                Login
-              </Link>
+              <LoginDropdown />
             </li>
           </ul>
           <ThemeSwitch />
