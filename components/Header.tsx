@@ -2,8 +2,12 @@ import Link from "next/link";
 import ThemeSwitch from "./ThemeSwitch";
 import React from "react";
 import LoginDropdown from "./LoginForm";
+import { auth } from "@/auth";
+import Logout from "./Logout";
 
-export default function Header() {
+export default async function Header() {
+  const session = await auth();
+
   return (
     <header className="bg-white dark:bg-black shadow-sm dark:border-b dark:border-gray-800">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -12,10 +16,14 @@ export default function Header() {
         </div>
         <nav className="flex items-center">
           <ul className="flex space-x-2 mr-2">
-            
-            <li>
+            {!session ? <li>
               <LoginDropdown />
-            </li>
+            </li> : 
+              <li>
+                <Logout />
+              </li>
+            }
+            
           </ul>
           <ThemeSwitch />
         </nav>

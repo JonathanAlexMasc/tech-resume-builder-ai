@@ -1,4 +1,5 @@
 import Link from "next/link";
+import React from "react";
 
 export default function Hero() {
   return (
@@ -11,7 +12,7 @@ export default function Hero() {
       </p>
       <div className="flex justify-center space-x-6">
         <Link
-          href="/get-started"
+          href="/home"
           className="bg-black text-white dark:bg-white dark:text-black px-5 py-2 rounded-md text-base font-semibold hover:bg-gray-800 dark:hover:bg-gray-200 transition duration-300"
         >
           Get Started
