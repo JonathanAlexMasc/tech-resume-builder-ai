@@ -1,13 +1,12 @@
 import React from 'react';
 import { auth } from '@/auth';
-import { redirect } from 'next/navigation';
-import Image from 'next/image';
 import AuthRedirectMessage from '@/components/AuthRedirectMessage';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import HeaderForm from '@/forms/HeaderForm';
+import ExperienceForm from '@/forms/ExperienceForm';
 
-const HomePage = async () => {
+
+const ExperiencePage = async () => {
     const session = await auth();
     if (!session?.user) {
         return <AuthRedirectMessage />;
@@ -15,10 +14,10 @@ const HomePage = async () => {
     return (
         <div>
             <Header />
-            <HeaderForm />
+            <ExperienceForm />
             <Footer />
         </div>
     );
 };
 
-export default HomePage;
+export default ExperiencePage;
