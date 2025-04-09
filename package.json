@@ -10,14 +10,15 @@
   },
   "dependencies": {
     "next": "15.2.4",
-    "next-auth": "^4.24.11",
+    "next-auth": "^5.0.0-beta.25",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-google-button": "^0.8.0"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/node": "22.14.0",
+    "@types/react": "19.1.0",
     "eslint": "^9",
     "eslint-config-next": "15.2.4",
     "tailwindcss": "^4"
