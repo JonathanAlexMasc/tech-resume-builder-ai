@@ -27,8 +27,12 @@ export default function HeaderForm() {
         });
 
         if (res.ok) {
-            console.log('Saved successfully');
-            router.push('/experience');
+            const data = await res.json();
+            const resumeId = data.resume.id; // ✅ Access the resume ID returned from backend
+            console.log('Resume ID:', resumeId);
+
+            // Pass resumeId to experience page via URL:
+            router.push(`/experience?resumeId=${resumeId}`);
         } else {
             console.error('Error saving data');
         }

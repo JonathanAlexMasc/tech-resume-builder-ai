@@ -14,21 +14,30 @@ export async function POST(req) {
         }
 
         const body = await req.json();
-        const { resumeId, role, company, startDate, endDate } = body;
+        const { resumeId, title } = body;
 
-        const experience = await prisma.experience.create({
+        if (!resumeId || !title) {
+            return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+        }
+
+        const resume = await prisma.resume.findUnique({
+            where: { id: resumeId },
+        });
+
+        if (!resume) {
+            return NextResponse.json({ error: 'Resume not found' }, { status: 404 });
+        }
+
+        const project = await prisma.project.create({
             data: {
-                role,
-                company,
-                startDate: new Date(startDate),
-                endDate: endDate ? new Date(endDate) : null,
+                title,
                 resumeId,
             },
         });
 
-        return NextResponse.json({ success: true, experience });
+        return NextResponse.json({ success: true, project });
     } catch (err) {
-        console.error('[POST /api/experience] Error:', err);
+        console.error('[POST /api/project] Error:', err);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

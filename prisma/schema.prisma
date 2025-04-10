@@ -64,6 +64,7 @@ model Resume {
 
   createdAt  DateTime     @default(now())
   Experience Experience[]
+  projects   Project[]
 }
 
 model Experience {
@@ -85,8 +86,23 @@ model BulletPoint {
   id      Int    @id @default(autoincrement())
   content String
 
-  experienceId Int
-  experience   Experience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  // Optional foreign keys to either experience or project
+  experienceId Int?
+  experience   Experience? @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+
+  projectId Int?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+model Project {
+  id       Int     @id @default(autoincrement())
+  title    String?
+  resumeId Int
+  resume   Resume  @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  bulletPoints BulletPoint[]
 
   createdAt DateTime @default(now())
 }
