@@ -12,8 +12,6 @@ function formatDate(date) {
 }
 
 function renderExperience(experiences) {
-  console.log("experiences", experiences);
-
   return [
     '\\resumeSubHeadingListStart',
     ...experiences.map(exp => `

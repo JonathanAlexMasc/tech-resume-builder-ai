@@ -20,10 +20,10 @@ export async function POST(req) {
             data: {
                 role,
                 company,
+                location,
                 startDate: new Date(startDate),
                 endDate: endDate ? new Date(endDate) : null,
-                resumeId,
-                location
+                resumeId
             },
         });
 
