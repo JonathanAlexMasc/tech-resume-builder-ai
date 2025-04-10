@@ -14,7 +14,7 @@ export async function POST(req) {
         }
 
         const body = await req.json();
-        const { resumeId, role, company, startDate, endDate } = body;
+        const { resumeId, role, company, startDate, endDate, location } = body;
 
         const experience = await prisma.experience.create({
             data: {
@@ -23,6 +23,7 @@ export async function POST(req) {
                 startDate: new Date(startDate),
                 endDate: endDate ? new Date(endDate) : null,
                 resumeId,
+                location
             },
         });
 

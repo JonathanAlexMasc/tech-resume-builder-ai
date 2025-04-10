@@ -1,6 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
-const { exec } = require('child_process');
-const { writeFileSync, readFileSync, existsSync, appendFileSync, mkdirSync } = require('fs');
+const { writeFileSync, readFileSync} = require('fs');
 const path = require('path');
 const tmp = require('tmp');
 const prisma = new PrismaClient();
@@ -48,41 +47,38 @@ export async function POST(req) {
     const texFilePath = path.join(tempDir.name, 'resume.tex');
     writeFileSync(texFilePath, texFilled);
 
-    return new Promise((resolve) => {
-        const dockerCmd = `docker run --rm --platform=linux/amd64 -v ${tempDir.name}:/data blang/latex pdflatex -interaction=nonstopmode resume.tex`;
-
-        exec(dockerCmd, (err, stdout, stderr) => {
-            if (err) {
-                const logMessage = `Resume ID: ${resumeId}\nSTDOUT:\n${stdout}\n\nSTDERR:\n${stderr}`;
-                logErrorToFile(logMessage);
-
-                resolve(new Response(JSON.stringify({ error: 'Docker LaTeX compilation failed' }), {
+    return fetch('https://latex-pdf-conversion-service-production.up.railway.app/compile', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ tex: texFilled })
+    })
+        .then(async (res) => {
+            if (!res.ok) {
+                const errorText = await res.text();
+                logErrorToFile(`Railway API Error: ${errorText}`);
+                return new Response(JSON.stringify({ error: 'PDF generation failed' }), {
                     status: 500,
                     headers: { 'Content-Type': 'application/json' }
-                }));
-                return;
+                });
             }
 
-            const pdfPath = path.join(tempDir.name, 'resume.pdf');
-            if (!existsSync(pdfPath)) {
-                logErrorToFile(`PDF not generated for Resume ID: ${resumeId}`);
-                resolve(new Response(JSON.stringify({ error: 'PDF not generated' }), {
-                    status: 500,
-                    headers: { 'Content-Type': 'application/json' }
-                }));
-                return;
-            }
+            const pdfBuffer = Buffer.from(await res.arrayBuffer());
 
-            const pdfBuffer = readFileSync(pdfPath);
-            tempDir.removeCallback();
-
-            resolve(new Response(pdfBuffer, {
+            return new Response(pdfBuffer, {
                 status: 200,
                 headers: {
                     'Content-Type': 'application/pdf',
                     'Content-Disposition': 'attachment; filename=resume.pdf'
                 }
-            }));
+            });
+        })
+        .catch((err) => {
+            logErrorToFile(`Railway API Request Failed: ${err.message}`);
+            return new Response(JSON.stringify({ error: 'PDF generation service failed' }), {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' }
+            });
         });
-    });
 }
