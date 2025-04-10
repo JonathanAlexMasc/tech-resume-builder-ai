@@ -119,12 +119,17 @@ export default function SkillForm() {
                 </button>
             )}
 
-            <button
-                type="submit"
-                className="rounded-md bg-indigo-600 text-white px-4 py-2 hover:bg-indigo-500"
-            >
-                Save
-            </button>
+            <div className="mt-6 flex items-center justify-end gap-x-6">
+                <button onClick={() => router.back()} type="button" className="text-sm font-semibold text-gray-900 dark:text-white mr-2">
+                    Back
+                </button>
+                <button
+                    type="submit"
+                    className="rounded-md bg-indigo-600 text-white px-4 py-2 hover:bg-indigo-500"
+                >
+                    Save
+                </button>
+            </div>
         </form>
     );
 }

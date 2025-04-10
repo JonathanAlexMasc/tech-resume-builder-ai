@@ -251,7 +251,7 @@ export default function ExperienceForm() {
                 </div>
 
                 <div className="mt-6 flex items-center justify-end gap-x-6">
-                    <button type="button" className="text-sm font-semibold text-gray-900 dark:text-white">
+                    <button onClick={() => router.back()} type="button" className="text-sm font-semibold text-gray-900 dark:text-white">
                         Back
                     </button>
                     <button
