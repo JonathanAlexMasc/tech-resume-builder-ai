@@ -66,6 +66,7 @@ model Resume {
   Experience Experience[]
   projects   Project[]
   skills     Skill[]
+  education  Education[]
 }
 
 model Experience {
@@ -122,3 +123,16 @@ model Skill {
 
   createdAt    DateTime @default(now())
 }
+
+model Education {
+  id        Int      @id @default(autoincrement())
+  resumeId  Int
+  resume    Resume   @relation(fields: [resumeId], references: [id])
+  school    String
+  location  String
+  startDate DateTime
+  endDate   DateTime?
+  major     String
+  createdAt DateTime @default(now())
+}
+
