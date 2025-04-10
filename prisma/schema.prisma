@@ -65,6 +65,7 @@ model Resume {
   createdAt  DateTime     @default(now())
   Experience Experience[]
   projects   Project[]
+  skills     Skill[]
 }
 
 model Experience {
@@ -105,4 +106,19 @@ model Project {
   bulletPoints BulletPoint[]
 
   createdAt DateTime @default(now())
+}
+
+model Skill {
+  id           Int      @id @default(autoincrement())
+  name         String
+
+  isLanguage   Boolean  @default(false)
+  isFramework  Boolean  @default(false)
+  isDev        Boolean  @default(false)
+  isCloud      Boolean  @default(false)
+
+  resumeId     Int
+  resume       Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime @default(now())
 }

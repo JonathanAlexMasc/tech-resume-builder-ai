@@ -59,7 +59,7 @@ export default function ProjectForm() {
         );
 
         if (bulletRes.every((res) => res.ok)) {
-            router.push('/'); // Or wherever you want to go next
+            router.push(`/skills?resumeId=${resumeId}`); // Or wherever you want to go next
         } else {
             alert('Some bullet points failed to save');
         }
