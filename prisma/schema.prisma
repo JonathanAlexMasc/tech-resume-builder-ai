@@ -15,9 +15,8 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  resumes       Resume[]  // 👈 updated to camelCase plural
+  resumes       Resume[] // 👈 updated to camelCase plural
 }
-
 
 model Account {
   id                String  @id @default(cuid())
@@ -54,16 +53,40 @@ model VerificationToken {
 }
 
 model Resume {
-  id        Int      @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   firstName String
   lastName  String
   phone     String?
   linkedin  String?
   github    String?
-
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "constraint_1")
+  user      User    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "constraint_1")
+
+  createdAt  DateTime     @default(now())
+  Experience Experience[]
+}
+
+model Experience {
+  id        Int       @id @default(autoincrement())
+  role      String
+  company   String
+  startDate DateTime
+  endDate   DateTime?
+
+  resumeId Int
+  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  bulletPoints BulletPoint[]
 
   createdAt DateTime @default(now())
 }
 
+model BulletPoint {
+  id      Int    @id @default(autoincrement())
+  content String
+
+  experienceId Int
+  experience   Experience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}

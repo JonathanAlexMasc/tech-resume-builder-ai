@@ -1,8 +1,10 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function HeaderForm() {
+    const router = useRouter();
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -16,7 +18,7 @@ export default function HeaderForm() {
             github: formData.get('github')
         };
 
-        const res = await fetch('/api/profile', {
+        const res = await fetch('/api/header', {
             method: 'POST',
             body: JSON.stringify(payload),
             headers: {
@@ -26,6 +28,7 @@ export default function HeaderForm() {
 
         if (res.ok) {
             console.log('Saved successfully');
+            router.push('/experience');
         } else {
             console.error('Error saving data');
         }
