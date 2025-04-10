@@ -13,9 +13,11 @@ export default function ExperienceForm() {
     const [form, setForm] = useState({
         role: '',
         company: '',
+        location: '', // <-- Added
         startDate: '',
         endDate: '',
     });
+
     const [bulletPoints, setBulletPoints] = useState(['']);
 
     const handleFormChange = (e) => {
@@ -45,7 +47,8 @@ export default function ExperienceForm() {
                 resumeId,
                 role: form.role,
                 company: form.company,
-                startDate: `${form.startDate}-01`, // convert "YYYY-MM" to full date
+                location: form.location, // <-- Included
+                startDate: `${form.startDate}-01`,
                 endDate: form.endDate ? `${form.endDate}-01` : null,
             }),
             headers: {
@@ -110,6 +113,20 @@ export default function ExperienceForm() {
                                     value={form.company}
                                     onChange={handleFormChange}
                                     placeholder="Amazon"
+                                    required
+                                    className="mt-2 block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5"
+                                />
+                            </div>
+
+                            <div className="sm:col-span-3">
+                                <label htmlFor="location" className="block text-sm font-medium">Location</label>
+                                <input
+                                    id="location"
+                                    name="location"
+                                    type="text"
+                                    value={form.location}
+                                    onChange={handleFormChange}
+                                    placeholder="Seattle, WA"
                                     required
                                     className="mt-2 block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5"
                                 />

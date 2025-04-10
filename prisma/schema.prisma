@@ -73,6 +73,7 @@ model Experience {
   id        Int       @id @default(autoincrement())
   role      String
   company   String
+  location  String?
   startDate DateTime
   endDate   DateTime?
 

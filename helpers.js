@@ -1,5 +1,5 @@
 const path = require('path');
-const { existsSync, mkdirSync, appendFileSync } = require('fs');
+const { writeFileSync, existsSync, mkdirSync, appendFileSync } = require('fs');
 
 function escapeLatex(str) {
     return str.replace(/([&%#_{}$])/g, '\\$1').replace(/~/g, '\\textasciitilde{}');
@@ -12,33 +12,50 @@ function formatDate(date) {
 }
 
 function renderExperience(experiences) {
-    return experiences.map(exp => `
-\\resumeSubheading
-  {${escapeLatex(exp.role)}}{${formatDate(exp.startDate)} -- ${formatDate(exp.endDate)}}
-  {${escapeLatex(exp.company)}}{}
-  \\resumeItemListStart
-    ${exp.bulletPoints.map(bp => `\\resumeItem{${escapeLatex(bp.content)}}`).join('\n')}
-  \\resumeItemListEnd
-`).join('\n');
+  console.log("experiences", experiences);
+
+  return [
+    '\\resumeSubHeadingListStart',
+    ...experiences.map(exp => `
+  \\resumeSubheading
+    {${escapeLatex(exp.role)}}{${formatDate(exp.startDate)} -- ${formatDate(exp.endDate)}}
+    {${escapeLatex(exp.company)}}{${escapeLatex(exp.location)}}
+    \\resumeItemListStart
+      ${exp.bulletPoints.map(bp => `\\resumeItem{${escapeLatex(bp.content)}}`).join('\n      ')}
+    \\resumeItemListEnd
+  `),
+    '\\resumeSubHeadingListEnd'
+  ].join('\n');
 }
+
 
 function renderProjects(projects) {
-    return projects.map(proj => `
-\\resumeProjectHeading
-  {\\textbf{${escapeLatex(proj.title)}}}{}
-  \\resumeItemListStart
-    ${proj.bulletPoints.map(bp => `\\resumeItem{${escapeLatex(bp.content)}}`).join('\n')}
-  \\resumeItemListEnd
-`).join('\n');
+  return [
+    '\\resumeSubHeadingListStart',
+    ...projects.map(proj => `
+  \\resumeProjectHeading
+    {\\textbf{${escapeLatex(proj.title)}}}{}
+    \\resumeItemListStart
+      ${proj.bulletPoints.map(bp => `\\resumeItem{${escapeLatex(bp.content)}}`).join('\n      ')}
+    \\resumeItemListEnd
+  `),
+    '\\resumeSubHeadingListEnd'
+  ].join('\n');
 }
 
+
 function renderEducation(educations) {
-    return educations.map(edu => `
-\\resumeSubheading
-  {${escapeLatex(edu.school)}}{${formatDate(edu.startDate)} -- ${formatDate(edu.endDate)}}
-  {${escapeLatex(edu.location)}}{${escapeLatex(edu.major)}}
-`).join('\n');
+  return [
+    '\\resumeSubHeadingListStart',
+    ...educations.map(edu => `
+  \\resumeSubheading
+    {${escapeLatex(edu.school)}}{${formatDate(edu.startDate)} -- ${formatDate(edu.endDate)}}
+    {${escapeLatex(edu.location)}}{${escapeLatex(edu.major)}}
+  `),
+    '\\resumeSubHeadingListEnd'
+  ].join('\n');
 }
+
 
 function renderSkills(skills) {
     const filter = (key) => skills.filter(skill => skill[key]).map(skill => escapeLatex(skill.name)).join(', ');
@@ -72,11 +89,11 @@ function logLatexToFile(resumeId, texContent) {
     const logDir = path.resolve('logs');
     const logPath = path.join(logDir, `resume-${resumeId}.tex`);
 
-    if (!fs.existsSync(logDir)) {
-        fs.mkdirSync(logDir);
+    if (!existsSync(logDir)) {
+        mkdirSync(logDir);
     }
 
-    fs.writeFileSync(logPath, texContent, 'utf8');
+    writeFileSync(logPath, texContent, 'utf8');
 }
 
 // Export all helper functions
