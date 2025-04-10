@@ -128,7 +128,7 @@ model Skill {
 model Education {
   id        Int      @id @default(autoincrement())
   resumeId  Int
-  resume    Resume   @relation(fields: [resumeId], references: [id])
+  resume    Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
   school    String
   location  String
   startDate DateTime
