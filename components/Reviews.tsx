@@ -1,3 +1,4 @@
+import React from "react";
 import Review from "./Review";
 
 interface ReviewData {
@@ -15,35 +16,35 @@ interface ReviewsProps {
 const defaultReviews: ReviewData[] = [
   {
     rating: 5,
-    title: "Best app ever!",
+    title: "Landed my first FAANG interview",
     content:
-      "This app has been a game-changer for me! It's made tracking my daily activities so much easier. I love how intuitive and user-friendly it is.",
-    author: "Jonas Aly",
-    designation: "Founder @ Company",
+      "The bullet point suggestions were insanely good. I used this resume for my Meta application and actually got a callback. Huge win.",
+    author: "Priya Menon",
+    designation: "Software Engineer @ Startup",
   },
   {
     rating: 5,
-    title: "Super helpful to stay organized",
+    title: "Exactly what every dev needs",
     content:
-      "I can't thank this app enough for helping me stay on top of my tasks. The reminders have saved me from missing important deadlines, and I'm much more organized now.",
-    author: "Mark Bures",
-    designation: "Businessman",
+      "I’ve tried Canva and Notion templates, but nothing came close to this. The LaTeX export looks so clean and professional — plus it’s ATS-friendly.",
+    author: "Kevin Huang",
+    designation: "CS Student @ UC Berkeley",
   },
   {
     rating: 5,
-    title: "Great app that saves time",
+    title: "AI-powered and it shows",
     content:
-      "The app's integration with my other tools is seamless. I can easily check my progress and activities without having to switch between multiple platforms.",
-    author: "William Kolas",
-    designation: "Student",
+      "I just typed in my role and experience, and it generated resume bullets that actually made me sound legit. The fact that this was built by FAANG engineers shows.",
+    author: "Sarah Johnson",
+    designation: "Frontend Dev @ Fintech Co",
   },
   {
     rating: 4,
-    title: "Seriously life changing app!",
+    title: "Great tool for busy devs",
     content:
-      "The insights and reports have been eye-opening. I now have a better understanding of my habits and can make adjustments to improve my productivity.",
-    author: "Andrew Chan",
-    designation: "Manager @ AB Company",
+      "It saved me hours of formatting. The versioning feature is super useful, and I love how fast the export is. I wish there were more design themes though.",
+    author: "Jared Patel",
+    designation: "Backend Developer",
   },
 ];
 

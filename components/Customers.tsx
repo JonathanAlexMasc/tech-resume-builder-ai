@@ -1,22 +1,22 @@
 import React from "react";
 import {
-  AiOutlineDiscord,
-  AiTwotoneBug,
-  AiTwotoneExperiment,
-  AiOutlineTaobao,
-  AiOutlineSpotify,
+  AiOutlineCloud,
+  AiOutlineFilePdf,
+  AiOutlineBulb,
+  AiOutlineUser,
   AiOutlineCode,
-  AiOutlineCiCircle,
+  AiOutlineCheckCircle,
+  AiFillThunderbolt,
 } from "react-icons/ai";
 
 const icons = [
-  { Icon: AiTwotoneBug },
-  { Icon: AiOutlineDiscord },
-  { Icon: AiTwotoneExperiment },
-  { Icon: AiOutlineTaobao },
-  { Icon: AiOutlineSpotify },
+  { Icon: AiOutlineCloud },
+  { Icon: AiOutlineFilePdf },
+  { Icon: AiOutlineBulb },
+  { Icon: AiOutlineUser },
   { Icon: AiOutlineCode },
-  { Icon: AiOutlineCiCircle },
+  { Icon: AiOutlineCheckCircle },
+  { Icon: AiFillThunderbolt },
 ];
 
 const Customers: React.FC = () => {
@@ -26,7 +26,7 @@ const Customers: React.FC = () => {
         <div className="flex flex-col md:flex-row items-center justify-between max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row w-full">
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-0 text-white dark:text-black text-center md:text-left md:w-1/3">
-              Over 50,000 people rely on our app for their daily needs
+              Trusted by thousands of developers building FAANG-ready resumes
             </h2>
             <div className="flex flex-wrap justify-center md:justify-end gap-6 md:w-2/3">
               {icons.map(({ Icon }, index) => (

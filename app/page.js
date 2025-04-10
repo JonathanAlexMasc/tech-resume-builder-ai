@@ -20,16 +20,22 @@ export default function Page() {
           leftHalf={
             <>
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-900 dark:text-white mb-4">
-                Effortlessly highlight the key features of your app
+                Build FAANG-ready resumes in minutes
               </h2>
               <p className="text-xl font-light">
-                Our app makes it easy to showcase your key features. With customizable sections, you can highlight the
-                most important aspects of your product. More to come.
+                Designed by FAANG engineers, our AI resume builder helps you craft tailored, ATS-friendly resumes with
+                clean LaTeX formatting and smart content suggestions — no design skills needed.
               </p>
             </>
           }
           rightHalf={
-            <Image src={"/products/phone.png"} alt="section-image" width={500} height={100} className="w-1/2 h-auto" />
+            <Image
+              src={"/products/phone.png"}
+              alt="Resume builder preview"
+              width={500}
+              height={100}
+              className="w-1/2 h-auto"
+            />
           }
         />
         <Customers />
@@ -38,17 +44,16 @@ export default function Page() {
           rightHalf={
             <div className="flex flex-col justify-end">
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-900 dark:text-white mb-4">
-                Highlight the key features
+                AI-Powered. ATS-Optimized. LaTeX-Perfect.
               </h2>
               <p className="text-xl font-light">
-                Talk about some of the key features of your app that you want to highlight. Use the beautiful accordion
-                to highlight the key features of your app.
+                Explore the features that make our resume builder stand out — from intelligent bullet point generation
+                and sleek LaTeX output, to version tracking and secure cloud storage. All built with FAANG-level precision.
               </p>
             </div>
           }
         />
         <Reviews />
-        <Download />
       </main>
       <Footer />
     </div>

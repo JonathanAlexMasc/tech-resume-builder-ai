@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 
@@ -41,19 +42,21 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, content, isOpen, t
 const defaultAccordionItems = [
   {
     title: "Sign up for free",
-    content: "Start your journey with a 34-day trial. It's easy no credit card or commitment.",
+    content:
+      "Start building your tech resume with zero commitment. No credit card needed — just create, export, and apply.",
   },
   {
-    title: "Easy to use",
+    title: "Smart suggestions powered by AI",
     content:
-      "Our app is designed to be user-friendly and easy to use. We want to provide a seamless experience for your users so that you can focus on what matters.",
+      "Generate role-specific bullet points and summaries trained on FAANG-level resumes. Say goodbye to writer’s block.",
   },
   {
-    title: "Focus on what matters",
+    title: "LaTeX-quality output",
     content:
-      "With better financial management, you can reduce money-related stress and focus on what matters most. More to come.",
+      "Your resume is rendered in a beautiful, professional LaTeX format — ATS-optimized and recruiter-approved.",
   },
 ];
+
 
 interface AccordionProps {
   items?: { title: string; content: string }[];
