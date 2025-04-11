@@ -16,19 +16,3 @@ export async function logoutAction() {
     await signOut({redirectTo: "/"});
 }
 
-export async function getUserResumes() {
-    const session = await auth();
-    if (!session?.user) {
-        return <AuthRedirectMessage />;
-    }
-
-    const resumes = await prisma.resume.findMany({
-        where: { userId: session.user.id },
-        orderBy: { createdAt: "desc" },
-    });
-
-    console.log(resumes)
-
-    return resumes;
-}
-
