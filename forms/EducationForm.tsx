@@ -1,13 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
 export default function EducationForm() {
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const resumeIdParam = searchParams.get('resumeId');
-    const resumeId = resumeIdParam ? parseInt(resumeIdParam, 10) : null;
+    const { resumeIdNum } = useParams();
+    const resumeId = parseInt(resumeIdNum as string, 10);
 
     const [educations, setEducations] = useState([
         {
@@ -23,7 +22,7 @@ export default function EducationForm() {
         const fetchEducations = async () => {
             if (!resumeId) return;
 
-            const res = await fetch(`/api/education?resumeId=${resumeId}`);
+            const res = await fetch(`/api/resume/${resumeId}/education`);
             if (res.ok) {
                 const data = await res.json();
                 if (data.education && data.education.length > 0) {
@@ -62,7 +61,7 @@ export default function EducationForm() {
         e.preventDefault();
 
         for (const edu of educations) {
-            const res = await fetch('/api/education', {
+            const res = await fetch(`/api/resume/${resumeId}/education`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

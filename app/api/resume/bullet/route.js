@@ -33,7 +33,7 @@ export async function POST(req) {
 
         return NextResponse.json({ success: true, bullet });
     } catch (err) {
-        console.error('[POST /api/bullet] Error:', err);
+        console.error('[POST /api/resume/bullet] Error:', err);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

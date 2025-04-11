@@ -19,7 +19,7 @@ export default function DownloadForm() {
         setIsDownloading(true);
 
         try {
-            const res = await fetch('/api/resume-compile-latex', {
+            const res = await fetch(`/api/resume/${resumeId}/compile`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ resumeId }),

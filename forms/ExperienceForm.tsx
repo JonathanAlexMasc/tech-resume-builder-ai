@@ -66,7 +66,7 @@ export default function ExperienceForm() {
         e.preventDefault();
 
         for (const exp of experiences) {
-            const expRes = await fetch('/api/experience', {
+            const expRes = await fetch(`/api/resume/${resumeId}/experience`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -87,7 +87,7 @@ export default function ExperienceForm() {
                 exp.bulletPoints
                     .filter((b) => b.trim() !== '')
                     .map((content) =>
-                        fetch('/api/bullet', {
+                        fetch('/api/resume/bullet', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ experienceId: experience.id, content }),

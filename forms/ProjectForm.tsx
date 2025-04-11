@@ -34,7 +34,7 @@ export default function ProjectForm() {
             return;
         }
 
-        const projectRes = await fetch('/api/project', {
+        const projectRes = await fetch('/api/resume/project', {
             method: 'POST',
             body: JSON.stringify({ resumeId, title }),
             headers: {
@@ -50,7 +50,7 @@ export default function ProjectForm() {
             bulletPoints
                 .filter((point) => point.trim() !== '')
                 .map((content) =>
-                    fetch('/api/bullet', {
+                    fetch('/api/resume/bullet', {
                         method: 'POST',
                         body: JSON.stringify({ projectId: project.id, content }),
                         headers: { 'Content-Type': 'application/json' },
@@ -59,7 +59,7 @@ export default function ProjectForm() {
         );
 
         if (bulletRes.every((res) => res.ok)) {
-            router.push(`/skills?resumeId=${resumeId}`); // Or wherever you want to go next
+            router.push(`/resume/${resumeId}/skills`); 
         } else {
             alert('Some bullet points failed to save');
         }
