@@ -54,19 +54,30 @@ model VerificationToken {
 
 model Resume {
   id        Int     @id @default(autoincrement())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+
+  createdAt DateTime     @default(now())
+
+  // Remove foreign key from here
+  header    Header?      @relation
+
+  Experience Experience[]
+  projects   Project[]
+  skills     Skill[]
+  education  Education[]
+}
+
+model Header {
+  id        Int    @id @default(autoincrement())
   firstName String
   lastName  String
   phone     String?
   linkedin  String?
   github    String?
-  userId    String
-  user      User    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "constraint_1")
 
-  createdAt  DateTime     @default(now())
-  Experience Experience[]
-  projects   Project[]
-  skills     Skill[]
-  education  Education[]
+  resumeId  Int    @unique
+  resume    Resume @relation(fields: [resumeId], references: [id])
 }
 
 model Experience {
