@@ -5,6 +5,26 @@ import { auth } from '@/auth';
 
 const prisma = new PrismaClient();
 
+export async function GET(req) {
+    const resumeIdParam = req.nextUrl.searchParams.get('resumeId');
+
+    if (!resumeIdParam) {
+        return NextResponse.json({ error: 'Missing resumeId' }, { status: 400 });
+    }
+
+    const resumeId = parseInt(resumeIdParam, 10);
+
+    const experiences = await prisma.experience.findMany({
+        where: { resumeId },
+        include: {
+            bulletPoints: true,
+        },
+        orderBy: { startDate: 'desc' },
+    });
+
+    return NextResponse.json({ experiences });
+}
+
 export async function POST(req) {
     try {
         const session = await auth();
@@ -16,20 +36,32 @@ export async function POST(req) {
         const body = await req.json();
         const { resumeId, role, company, startDate, endDate, location } = body;
 
-        const experience = await prisma.experience.create({
-            data: {
+        const experience = await prisma.experience.upsert({
+            where: {
+                resumeId_role_company_startDate: {
+                    resumeId,
+                    role,
+                    company,
+                    startDate: new Date(startDate),
+                },
+            },
+            update: {
+                location,
+                endDate: endDate ? new Date(endDate) : null,
+            },
+            create: {
+                resumeId,
                 role,
                 company,
                 location,
                 startDate: new Date(startDate),
                 endDate: endDate ? new Date(endDate) : null,
-                resumeId
             },
         });
 
         return NextResponse.json({ success: true, experience });
     } catch (err) {
-        console.error('[POST /api/experience] Error:', err);
+        console.error('[POST /api/resume/experience] Error:', err);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

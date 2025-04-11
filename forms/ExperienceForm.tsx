@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function ExperienceForm() {
@@ -19,6 +19,41 @@ export default function ExperienceForm() {
             bulletPoints: [''],
         },
     ]);
+
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchExperiences() {
+            if (!resumeId) return;
+
+            const res = await fetch(`/api/resume/experience?resumeId=${resumeId}`);
+            if (!res.ok) {
+                console.error('Failed to load experiences');
+                setLoading(false);
+                return;
+            }
+
+            const data = await res.json();
+            
+
+            if (data.experiences?.length > 0) {
+                setExperiences(
+                    data.experiences.map((exp) => ({
+                        role: exp.role || '',
+                        company: exp.company || '',
+                        location: exp.location || '',
+                        startDate: exp.startDate?.slice(0, 7) || '', // YYYY-MM
+                        endDate: exp.endDate?.slice(0, 7) || '',
+                        bulletPoints: exp.bulletPoints.map((b) => b.content) || [''],
+                    }))
+                );
+            }
+
+            setLoading(false);
+        }
+
+        fetchExperiences();
+    }, [resumeId]);
 
     const handleExperienceChange = (index, e) => {
         const updated = [...experiences];
@@ -66,7 +101,7 @@ export default function ExperienceForm() {
         e.preventDefault();
 
         for (const exp of experiences) {
-            const expRes = await fetch(`/api/resume/${resumeId}/experience`, {
+            const expRes = await fetch(`/api/resume/experience`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -100,8 +135,18 @@ export default function ExperienceForm() {
             }
         }
 
-        router.push(`/projects?resumeId=${resumeId}`);
+        router.push(`/resume/projects?resumeId=${resumeId}`);
     };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
+                <p className="text-lg font-medium text-gray-600 dark:text-gray-300">
+                    Loading experience data...
+                </p>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex items-start justify-center px-4 py-8 bg-white dark:bg-black">
@@ -251,7 +296,11 @@ export default function ExperienceForm() {
                 </div>
 
                 <div className="mt-6 flex items-center justify-end gap-x-6">
-                    <button onClick={() => router.back()} type="button" className="text-sm font-semibold text-gray-900 dark:text-white">
+                    <button
+                        onClick={() => router.back()}
+                        type="button"
+                        className="text-sm font-semibold text-gray-900 dark:text-white"
+                    >
                         Back
                     </button>
                     <button

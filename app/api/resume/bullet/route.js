@@ -4,6 +4,34 @@ import { auth } from '@/auth';
 
 const prisma = new PrismaClient();
 
+export async function GET(req) {
+    try {
+        const experienceIdParam = req.nextUrl.searchParams.get('experienceId');
+        const projectIdParam = req.nextUrl.searchParams.get('projectId');
+
+        if (!experienceIdParam && !projectIdParam) {
+            return NextResponse.json(
+                { error: 'Missing experienceId or projectId in query parameters' },
+                { status: 400 }
+            );
+        }
+
+        const whereClause = experienceIdParam
+            ? { experienceId: parseInt(experienceIdParam, 10) }
+            : { projectId: parseInt(projectIdParam, 10) };
+
+        const bullets = await prisma.bulletPoint.findMany({
+            where: whereClause,
+            orderBy: { id: 'asc' },
+        });
+
+        return NextResponse.json({ success: true, bullets });
+    } catch (err) {
+        console.error('[GET /api/resume/bullet] Error:', err);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
+
 export async function POST(req) {
     try {
         const session = await auth();
@@ -23,13 +51,37 @@ export async function POST(req) {
             );
         }
 
-        const bullet = await prisma.bulletPoint.create({
-            data: {
-                content,
-                experienceId: experienceId ?? null,
-                projectId: projectId ?? null,
-            },
-        });
+        let bullet;
+
+        if (experienceId) {
+            bullet = await prisma.bulletPoint.upsert({
+                where: {
+                    content_experienceId: {
+                        content,
+                        experienceId,
+                    },
+                },
+                update: {}, // no updates for now
+                create: {
+                    content,
+                    experienceId,
+                },
+            });
+        } else {
+            bullet = await prisma.bulletPoint.upsert({
+                where: {
+                    content_projectId: {
+                        content,
+                        projectId,
+                    },
+                },
+                update: {},
+                create: {
+                    content,
+                    projectId,
+                },
+            });
+        }
 
         return NextResponse.json({ success: true, bullet });
     } catch (err) {
@@ -37,3 +89,4 @@ export async function POST(req) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
+

@@ -8,7 +8,6 @@ const prisma = new PrismaClient();
 
 export async function loginAction(formData) {
     const action = formData.get("action");
-    console.log("action", action);
     await signIn(action, {redirectTo: "/resume"});
 }
 

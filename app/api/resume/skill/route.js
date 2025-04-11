@@ -16,8 +16,6 @@ export async function POST(req) {
         const body = await req.json();
         const { name, resumeId, isLanguage, isFramework, isDev, isCloud } = body;
 
-        console.log('[POST /api/skill] body:', body);
-
         if (!name || !resumeId) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
