@@ -5,10 +5,9 @@ import Image from 'next/image';
 import AuthRedirectMessage from '@/components/AuthRedirectMessage';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import HomePage from '@/forms/HomeForm';
-import HeaderPage from '../header/page';
+import HeaderForm from '@/forms/HeaderForm';
 
-const HomePage = async () => {
+const HeaderPage = async () => {
     const session = await auth();
     if (!session?.user) {
         return <AuthRedirectMessage />;
@@ -16,10 +15,10 @@ const HomePage = async () => {
     return (
         <div>
             <Header />
-            <HeaderPage />
+            <HeaderForm />
             <Footer />
         </div>
     );
 };
 
-export default HomePage;
+export default HeaderPage;

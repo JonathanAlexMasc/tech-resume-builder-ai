@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function EducationForm() {
@@ -18,6 +18,22 @@ export default function EducationForm() {
             major: '',
         },
     ]);
+
+    useEffect(() => {
+        const fetchEducations = async () => {
+            if (!resumeId) return;
+
+            const res = await fetch(`/api/education?resumeId=${resumeId}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data.education && data.education.length > 0) {
+                    setEducations(data.education);
+                }
+            }
+        };
+
+        fetchEducations();
+    }, [resumeId]);
 
     const handleChange = (index, e) => {
         const updated = [...educations];

@@ -36,3 +36,29 @@ export async function POST(req) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
+
+export async function GET(req) {
+    try {
+        const session = await auth();
+        if (!session || !session.user?.email) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const { searchParams } = new URL(req.url);
+        const resumeId = parseInt(searchParams.get('resumeId'));
+
+        if (!resumeId) {
+            return NextResponse.json({ error: 'Missing resumeId' }, { status: 400 });
+        }
+
+        const education = await prisma.education.findMany({
+            where: { resumeId },
+            orderBy: { startDate: 'desc' },
+        });
+
+        return NextResponse.json({ education }, { status: 200 });
+    } catch (error) {
+        console.error('Failed to fetch education:', error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
