@@ -65,3 +65,29 @@ export async function POST(req) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
+
+export async function DELETE(req) {
+    const { searchParams } = new URL(req.url);
+    const id = parseInt(searchParams.get('id'), 10);
+
+    if (!id) {
+        return new Response('Missing experience ID', { status: 400 });
+    }
+
+    try {
+        // Delete associated bullet points first
+        await prisma.bulletPoint.deleteMany({
+            where: { experienceId: id },
+        });
+
+        // Then delete the experience
+        await prisma.experience.delete({
+            where: { id },
+        });
+
+        return new Response('Experience deleted', { status: 200 });
+    } catch (err) {
+        console.error(err);
+        return new Response('Failed to delete experience', { status: 500 });
+    }
+}

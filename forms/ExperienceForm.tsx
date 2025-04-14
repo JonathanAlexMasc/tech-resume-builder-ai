@@ -9,17 +9,7 @@ export default function ExperienceForm() {
     const resumeIdParam = searchParams.get('resumeId');
     const resumeId = resumeIdParam ? parseInt(resumeIdParam, 10) : null;
 
-    const [experiences, setExperiences] = useState([
-        {
-            role: '',
-            company: '',
-            location: '',
-            startDate: '',
-            endDate: '',
-            bulletPoints: [''],
-        },
-    ]);
-
+    const [experiences, setExperiences] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -34,17 +24,17 @@ export default function ExperienceForm() {
             }
 
             const data = await res.json();
-            
 
             if (data.experiences?.length > 0) {
                 setExperiences(
                     data.experiences.map((exp) => ({
+                        id: exp.id,
                         role: exp.role || '',
                         company: exp.company || '',
                         location: exp.location || '',
-                        startDate: exp.startDate?.slice(0, 7) || '', // YYYY-MM
+                        startDate: exp.startDate?.slice(0, 7) || '',
                         endDate: exp.endDate?.slice(0, 7) || '',
-                        bulletPoints: exp.bulletPoints.map((b) => b.content) || [''],
+                        bulletPoints: exp.bulletPoints.map((b) => ({ id: b.id, content: b.content })) || [{ content: '' }],
                     }))
                 );
             }
@@ -55,25 +45,37 @@ export default function ExperienceForm() {
         fetchExperiences();
     }, [resumeId]);
 
-    const handleExperienceChange = (index, e) => {
+    const handleChange = (index, field, value) => {
         const updated = [...experiences];
-        updated[index][e.target.name] = e.target.value;
+        updated[index][field] = value;
         setExperiences(updated);
     };
 
     const handleBulletChange = (expIndex, bulletIndex, value) => {
         const updated = [...experiences];
-        updated[expIndex].bulletPoints[bulletIndex] = value;
+        updated[expIndex].bulletPoints[bulletIndex].content = value;
         setExperiences(updated);
     };
 
     const addBullet = (expIndex) => {
         const updated = [...experiences];
-        updated[expIndex].bulletPoints.push('');
+        updated[expIndex].bulletPoints.push({ content: '' });
         setExperiences(updated);
     };
 
-    const removeBullet = (expIndex, bulletIndex) => {
+    const removeBullet = async (expIndex, bulletIndex) => {
+        const bullet = experiences[expIndex].bulletPoints[bulletIndex];
+
+        if (bullet.id) {
+            const res = await fetch(`/api/resume/bullet?id=${bullet.id}`, {
+                method: 'DELETE',
+            });
+
+            if (!res.ok) {
+                return alert('Failed to delete bullet point');
+            }
+        }
+
         const updated = [...experiences];
         updated[expIndex].bulletPoints.splice(bulletIndex, 1);
         setExperiences(updated);
@@ -88,54 +90,71 @@ export default function ExperienceForm() {
                 location: '',
                 startDate: '',
                 endDate: '',
-                bulletPoints: [''],
+                bulletPoints: [{ content: '' }],
             },
         ]);
     };
 
-    const removeExperience = (index) => {
-        setExperiences(experiences.filter((_, i) => i !== index));
-    };
+    const removeExperience = async (index) => {
+        const exp = experiences[index];
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        for (const exp of experiences) {
-            const expRes = await fetch(`/api/resume/experience`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    resumeId,
-                    role: exp.role,
-                    company: exp.company,
-                    location: exp.location,
-                    startDate: `${exp.startDate}-01`,
-                    endDate: exp.endDate ? `${exp.endDate}-01` : null,
-                }),
+        if (exp.id) {
+            const res = await fetch(`/api/resume/experience?id=${exp.id}`, {
+                method: 'DELETE',
             });
 
-            if (!expRes.ok) return alert('Failed to save experience');
-
-            const { experience } = await expRes.json();
-
-            const bulletRes = await Promise.all(
-                exp.bulletPoints
-                    .filter((b) => b.trim() !== '')
-                    .map((content) =>
-                        fetch('/api/resume/bullet', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ experienceId: experience.id, content }),
-                        })
-                    )
-            );
-
-            if (!bulletRes.every((res) => res.ok)) {
-                return alert('Some bullet points failed to save');
+            if (!res.ok) {
+                return alert('Failed to delete experience from the database.');
             }
         }
 
-        router.push(`/resume/projects?resumeId=${resumeId}`);
+        setExperiences(experiences.filter((_, i) => i !== index));
+    };
+
+    const handleSubmit = async (e, exp, index) => {
+        e.preventDefault();
+
+        const res = await fetch(`/api/resume/experience`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                resumeId,
+                role: exp.role,
+                company: exp.company,
+                location: exp.location,
+                startDate: `${exp.startDate}-01`,
+                endDate: exp.endDate ? `${exp.endDate}-01` : null,
+            }),
+        });
+
+        if (!res.ok) return alert('Failed to save experience');
+        const { experience } = await res.json();
+
+        const bulletRes = await Promise.all(
+            exp.bulletPoints
+                .filter((b) => b.content.trim() !== '')
+                .map((b) => {
+                    if (b.id) {
+                        return fetch('/api/resume/bullet', {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id: b.id, content: b.content }),
+                        });
+                    } else {
+                        return fetch('/api/resume/bullet', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ experienceId: experience.id, content: b.content }),
+                        });
+                    }
+                })
+        );
+
+        if (!bulletRes.every((res) => res.ok)) {
+            return alert('Some bullet points failed to save');
+        }
+
+        alert('Experience saved!');
     };
 
     if (loading) {
@@ -149,168 +168,143 @@ export default function ExperienceForm() {
     }
 
     return (
-        <div className="min-h-screen flex items-start justify-center px-4 py-8 bg-white dark:bg-black">
-            <form
-                onSubmit={handleSubmit}
-                className="w-full max-w-2xl bg-white dark:bg-black p-6 rounded-md shadow-md text-gray-900 dark:text-gray-100"
-            >
-                <div className="space-y-12">
-                    <h2 className="text-xl font-bold">Experience</h2>
-                    {experiences.map((exp, index) => (
-                        <div
-                            key={index}
-                            className="border-b border-gray-300 dark:border-gray-700 pb-12"
-                        >
-                            <h3 className="text-base font-semibold mb-2">Experience {index + 1}</h3>
+        <div className="min-h-screen px-4 py-8 bg-white dark:bg-black text-gray-900 dark:text-gray-100">
+            <h2 className="text-2xl font-bold mb-6 text-center">Experience</h2>
 
-                            <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                                <div className="sm:col-span-3">
-                                    <label htmlFor="role" className="block text-sm font-medium">
-                                        Job Title
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="role"
-                                        value={exp.role}
-                                        onChange={(e) => handleExperienceChange(index, e)}
-                                        placeholder="Software Engineer"
+            {experiences.length === 0 && (
+                <div className="flex justify-center">
+                    <button
+                        onClick={addExperience}
+                        className="text-sm text-indigo-600 dark:text-indigo-400 font-medium"
+                    >
+                        + Add Experience
+                    </button>
+                </div>
+            )}
+
+            {experiences.map((exp, index) => (
+                <form
+                    key={index}
+                    onSubmit={(e) => handleSubmit(e, exp, index)}
+                    className="max-w-2xl mx-auto mb-10 bg-white dark:bg-gray-900 p-6 rounded-md shadow-md space-y-6"
+                >
+                    <h3 className="text-base font-semibold">Experience {index + 1}</h3>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <input
+                            type="text"
+                            name="role"
+                            value={exp.role}
+                            onChange={(e) => handleChange(index, 'role', e.target.value)}
+                            placeholder="Job Title"
+                            required
+                            className="rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                        />
+                        <input
+                            type="text"
+                            name="company"
+                            value={exp.company}
+                            onChange={(e) => handleChange(index, 'company', e.target.value)}
+                            placeholder="Company"
+                            required
+                            className="rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                        />
+                        <input
+                            type="text"
+                            name="location"
+                            value={exp.location}
+                            onChange={(e) => handleChange(index, 'location', e.target.value)}
+                            placeholder="Location"
+                            required
+                            className="rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                        />
+                        <input
+                            type="month"
+                            name="startDate"
+                            value={exp.startDate}
+                            onChange={(e) => handleChange(index, 'startDate', e.target.value)}
+                            required
+                            className="rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                        />
+                        <input
+                            type="month"
+                            name="endDate"
+                            value={exp.endDate}
+                            onChange={(e) => handleChange(index, 'endDate', e.target.value)}
+                            className="rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block mb-1 text-sm font-medium">Bullet Points</label>
+                        <div className="space-y-3">
+                            {exp.bulletPoints.map((point, i) => (
+                                <div key={point.id || i} className="flex gap-2">
+                                    <textarea
+                                        value={point.content}
+                                        onChange={(e) => handleBulletChange(index, i, e.target.value)}
+                                        placeholder={`Bullet point ${i + 1}`}
                                         required
-                                        className="mt-2 block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5"
+                                        className="flex-grow rounded-md px-3 py-2 bg-white dark:bg-gray-800"
                                     />
-                                </div>
-
-                                <div className="sm:col-span-3">
-                                    <label htmlFor="company" className="block text-sm font-medium">
-                                        Company
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="company"
-                                        value={exp.company}
-                                        onChange={(e) => handleExperienceChange(index, e)}
-                                        placeholder="Amazon"
-                                        required
-                                        className="mt-2 block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5"
-                                    />
-                                </div>
-
-                                <div className="sm:col-span-3">
-                                    <label htmlFor="location" className="block text-sm font-medium">
-                                        Location
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="location"
-                                        value={exp.location}
-                                        onChange={(e) => handleExperienceChange(index, e)}
-                                        placeholder="Seattle, WA"
-                                        required
-                                        className="mt-2 block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5"
-                                    />
-                                </div>
-
-                                <div className="sm:col-span-3">
-                                    <label htmlFor="startDate" className="block text-sm font-medium">
-                                        Start Date
-                                    </label>
-                                    <input
-                                        type="month"
-                                        name="startDate"
-                                        value={exp.startDate}
-                                        onChange={(e) => handleExperienceChange(index, e)}
-                                        required
-                                        className="mt-2 block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5"
-                                    />
-                                </div>
-
-                                <div className="sm:col-span-3">
-                                    <label htmlFor="endDate" className="block text-sm font-medium">
-                                        End Date
-                                    </label>
-                                    <input
-                                        type="month"
-                                        name="endDate"
-                                        value={exp.endDate}
-                                        onChange={(e) => handleExperienceChange(index, e)}
-                                        className="mt-2 block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5"
-                                    />
-                                </div>
-
-                                <div className="col-span-full">
-                                    <label className="block text-sm font-medium">Bullet Points</label>
-                                    <div className="mt-2 space-y-3">
-                                        {exp.bulletPoints.map((point, i) => (
-                                            <div key={i} className="flex gap-2">
-                                                <textarea
-                                                    value={point}
-                                                    onChange={(e) => handleBulletChange(index, i, e.target.value)}
-                                                    placeholder={`Bullet point ${i + 1}`}
-                                                    required
-                                                    className="flex-grow rounded-md bg-white dark:bg-gray-800 px-3 py-1.5 text-base text-gray-900 dark:text-white outline outline-1 outline-gray-300 dark:outline-gray-600"
-                                                />
-                                                {exp.bulletPoints.length > 1 && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => removeBullet(index, i)}
-                                                        className="text-red-500"
-                                                    >
-                                                        ✕
-                                                    </button>
-                                                )}
-                                            </div>
-                                        ))}
+                                    {exp.bulletPoints.length > 1 && (
                                         <button
                                             type="button"
-                                            onClick={() => addBullet(index)}
-                                            className="text-sm text-indigo-600 dark:text-indigo-400 font-medium"
+                                            onClick={() => removeBullet(index, i)}
+                                            className="text-red-500"
                                         >
-                                            + Add another bullet point
+                                            ✕
                                         </button>
-                                    </div>
+                                    )}
                                 </div>
-                            </div>
-
-                            {experiences.length > 1 && (
-                                <div className="flex justify-end mt-4">
-                                    <button
-                                        type="button"
-                                        onClick={() => removeExperience(index)}
-                                        className="text-red-500"
-                                    >
-                                        Remove this experience
-                                    </button>
-                                </div>
-                            )}
+                            ))}
+                            <button
+                                type="button"
+                                onClick={() => addBullet(index)}
+                                className="text-sm text-indigo-600 dark:text-indigo-400 font-medium"
+                            >
+                                + Add another bullet point
+                            </button>
                         </div>
-                    ))}
+                    </div>
 
-                    <div className="flex justify-start">
+                    <div className="flex justify-between items-center">
                         <button
                             type="button"
-                            onClick={addExperience}
-                            className="text-sm text-indigo-600 dark:text-indigo-400 font-medium"
+                            onClick={() => removeExperience(index)}
+                            className="text-red-500 text-sm"
                         >
-                            + Add another experience
+                            Remove Experience
+                        </button>
+                        <button
+                            type="submit"
+                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
+                        >
+                            Save Experience
                         </button>
                     </div>
-                </div>
+                </form>
+            ))}
 
-                <div className="mt-6 flex items-center justify-end gap-x-6">
+            {experiences.length > 0 && (
+                <div className="flex justify-center mt-4">
                     <button
-                        onClick={() => router.back()}
-                        type="button"
-                        className="text-sm font-semibold text-gray-900 dark:text-white"
+                        onClick={addExperience}
+                        className="text-sm text-indigo-600 dark:text-indigo-400 font-medium"
                     >
-                        Back
-                    </button>
-                    <button
-                        type="submit"
-                        className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
-                    >
-                        Next
+                        + Add Another Experience
                     </button>
                 </div>
-            </form>
+            )}
+
+            <div className="flex justify-end mt-8 max-w-2xl mx-auto">
+                <button
+                    onClick={() => router.push(`/resume/projects?resumeId=${resumeId}`)}
+                    className="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500"
+                >
+                    Continue to Projects
+                </button>
+            </div>
         </div>
     );
 }

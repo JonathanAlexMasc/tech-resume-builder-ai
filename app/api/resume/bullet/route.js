@@ -90,3 +90,40 @@ export async function POST(req) {
     }
 }
 
+export async function DELETE(req) {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+
+    if (!id) return new Response('Missing bullet point ID', { status: 400 });
+
+    try {
+        await prisma.bulletPoint.delete({
+            where: { id: parseInt(id, 10) }, // or keep as string if it's cuid()
+        });
+
+        return new Response('Bullet point deleted', { status: 200 });
+    } catch (err) {
+        console.error(err);
+        return new Response('Failed to delete bullet point', { status: 500 });
+    }
+}
+
+export async function PUT(req) {
+    const { id, content } = await req.json();
+
+    if (!id || !content) {
+        return new Response('Missing bullet point ID or content', { status: 400 });
+    }
+
+    try {
+        const updated = await prisma.bulletPoint.update({
+            where: { id },
+            data: { content },
+        });
+
+        return Response.json({ updated });
+    } catch (err) {
+        console.error(err);
+        return new Response('Failed to update bullet point', { status: 500 });
+    }
+}
