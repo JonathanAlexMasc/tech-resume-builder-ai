@@ -62,3 +62,31 @@ export async function GET(req) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
+
+export async function PUT(req) {
+    try {
+        const body = await req.json();
+        const { id, resumeId, school, location, startDate, endDate, major } = body;
+
+        if (!id || !resumeId || !school || !location || !startDate || !major) {
+            return new Response('Missing required fields', { status: 400 });
+        }
+
+        const updated = await prisma.education.update({
+            where: { id },
+            data: {
+                resumeId,
+                school,
+                location,
+                startDate: new Date(startDate),
+                endDate: endDate ? new Date(endDate) : null,
+                major,
+            },
+        });
+
+        return Response.json({ education: updated });
+    } catch (error) {
+        console.error('[PUT /api/resume/education]', error);
+        return new Response('Failed to update education', { status: 500 });
+    }
+}

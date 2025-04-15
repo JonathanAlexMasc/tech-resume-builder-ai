@@ -1,21 +1,57 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function SkillForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const resumeIdParam = searchParams.get('resumeId'); // not expId!
+    const resumeIdParam = searchParams.get('resumeId');
     const resumeId = resumeIdParam ? parseInt(resumeIdParam, 10) : null;
 
-    const [skills, setSkills] = useState([
-        { name: '', isLanguage: false, isFramework: false, isDev: false, isCloud: false }
-    ]);
+    const [skills, setSkills] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchSkills() {
+            if (!resumeId) return;
+
+            const res = await fetch(`/api/resume/skill?resumeId=${resumeId}`);
+            if (!res.ok) {
+                console.error('Failed to load skills');
+                setLoading(false);
+                return;
+            }
+
+            const data = await res.json();
+            if (data.skills?.length > 0) {
+                setSkills(data.skills);
+            } else {
+                setSkills([{ name: '', isLanguage: false, isFramework: false, isDev: false, isCloud: false }]);
+            }
+            setLoading(false);
+        }
+
+        fetchSkills();
+    }, [resumeId]);
 
     const handleChange = (index, field, value) => {
         const updated = [...skills];
-        updated[index][field] = value;
+
+        // Ensure only one checkbox is selected
+        if (['isLanguage', 'isFramework', 'isDev', 'isCloud'].includes(field)) {
+            updated[index] = {
+                ...updated[index],
+                isLanguage: false,
+                isFramework: false,
+                isDev: false,
+                isCloud: false,
+                [field]: value,
+            };
+        } else {
+            updated[index][field] = value;
+        }
+
         setSkills(updated);
     };
 
@@ -25,7 +61,19 @@ export default function SkillForm() {
         }
     };
 
-    const removeSkill = (index) => {
+    const removeSkill = async (index) => {
+        const skill = skills[index];
+
+        if (skill.id) {
+            const res = await fetch(`/api/resume/skill?id=${skill.id}`, {
+                method: 'DELETE',
+            });
+
+            if (!res.ok) {
+                return alert('Failed to delete skill');
+            }
+        }
+
         setSkills(skills.filter((_, i) => i !== index));
     };
 
@@ -34,28 +82,46 @@ export default function SkillForm() {
 
         const validSkills = skills.filter(skill => skill.name.trim() !== '');
         const responses = await Promise.all(
-            validSkills.map((skill) =>
-                fetch('/api/skill', {
-                    method: 'POST',
-                    body: JSON.stringify({ ...skill, resumeId }),
-                    headers: { 'Content-Type': 'application/json' },
-                })
-            )
+            validSkills.map((skill) => {
+                if (skill.id) {
+                    return fetch('/api/resume/skill', {
+                        method: 'PUT',
+                        body: JSON.stringify({ ...skill }),
+                        headers: { 'Content-Type': 'application/json' },
+                    });
+                } else {
+                    return fetch('/api/resume/skill', {
+                        method: 'POST',
+                        body: JSON.stringify({ ...skill, resumeId }),
+                        headers: { 'Content-Type': 'application/json' },
+                    });
+                }
+            })
         );
 
         if (responses.every(res => res.ok)) {
-            router.push(`/education?resumeId=${resumeId}`);
+            router.push(`/resume/education?resumeId=${resumeId}`);
         } else {
             alert('Some skills failed to save');
         }
     };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
+                <p className="text-lg font-medium text-gray-600 dark:text-gray-300">
+                    Loading skills...
+                </p>
+            </div>
+        );
+    }
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6 max-w-xl mx-auto py-8">
             <h2 className="text-lg font-semibold">Add up to 10 Skills</h2>
 
             {skills.map((skill, index) => (
-                <div key={index} className="border border-gray-300 dark:border-gray-700 p-4 rounded-md space-y-4">
+                <div key={skill.id || index} className="border border-gray-300 dark:border-gray-700 p-4 rounded-md space-y-4">
                     <div className="flex items-center justify-between">
                         <input
                             type="text"

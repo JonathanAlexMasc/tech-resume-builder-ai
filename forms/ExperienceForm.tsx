@@ -114,10 +114,14 @@ export default function ExperienceForm() {
     const handleSubmit = async (e, exp, index) => {
         e.preventDefault();
 
-        const res = await fetch(`/api/resume/experience`, {
-            method: 'POST',
+        const method = exp.id ? 'PUT' : 'POST';
+        const url = '/api/resume/experience';
+
+        const res = await fetch(url, {
+            method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+                id: exp.id,
                 resumeId,
                 role: exp.role,
                 company: exp.company,
@@ -299,8 +303,14 @@ export default function ExperienceForm() {
 
             <div className="flex justify-end mt-8 max-w-2xl mx-auto">
                 <button
+                    onClick={() => router.back()}
+                    className="rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-600 mr-3"
+                >
+                    Back
+                </button>
+                <button
                     onClick={() => router.push(`/resume/projects?resumeId=${resumeId}`)}
-                    className="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500"
+                    className="rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-600"
                 >
                     Continue to Projects
                 </button>

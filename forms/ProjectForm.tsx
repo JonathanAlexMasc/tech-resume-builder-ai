@@ -1,145 +1,272 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function ProjectForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const resumeIdParam = searchParams.get('resumeId'); // not expId!
+    const resumeIdParam = searchParams.get('resumeId');
     const resumeId = resumeIdParam ? parseInt(resumeIdParam, 10) : null;
 
-    const [title, setTitle] = useState('');
-    const [bulletPoints, setBulletPoints] = useState(['']);
+    const [projects, setProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const handleBulletChange = (index: number, value: string) => {
-        const updated = [...bulletPoints];
-        updated[index] = value;
-        setBulletPoints(updated);
+    useEffect(() => {
+        async function fetchProjects() {
+            if (!resumeId) return;
+
+            const res = await fetch(`/api/resume/project?resumeId=${resumeId}`);
+            if (!res.ok) {
+                console.error('Failed to load projects');
+                setLoading(false);
+                return;
+            }
+
+            const data = await res.json();
+
+            if (data.projects?.length > 0) {
+                setProjects(
+                    data.projects.map((p) => ({
+                        id: p.id,
+                        title: p.title || '',
+                        bulletPoints: p.bulletPoints.map((b) => ({ id: b.id, content: b.content })) || [{ content: '' }],
+                    }))
+                );
+            }
+
+            setLoading(false);
+        }
+
+        fetchProjects();
+    }, [resumeId]);
+
+    const handleTitleChange = (index, value) => {
+        const updated = [...projects];
+        updated[index].title = value;
+        setProjects(updated);
     };
 
-    const addBullet = () => {
-        setBulletPoints([...bulletPoints, '']);
+    const handleBulletChange = (projIndex, bulletIndex, value) => {
+        const updated = [...projects];
+        updated[projIndex].bulletPoints[bulletIndex].content = value;
+        setProjects(updated);
     };
 
-    const removeBullet = (index: number) => {
-        setBulletPoints(bulletPoints.filter((_, i) => i !== index));
+    const addBullet = (projIndex) => {
+        const updated = [...projects];
+        updated[projIndex].bulletPoints.push({ content: '' });
+        setProjects(updated);
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const removeBullet = async (projIndex, bulletIndex) => {
+        const bullet = projects[projIndex].bulletPoints[bulletIndex];
+
+        if (bullet.id) {
+            const res = await fetch(`/api/resume/bullet?id=${bullet.id}`, {
+                method: 'DELETE',
+            });
+
+            if (!res.ok) {
+                return alert('Failed to delete bullet point');
+            }
+        }
+
+        const updated = [...projects];
+        updated[projIndex].bulletPoints.splice(bulletIndex, 1);
+        setProjects(updated);
+    };
+
+    const addProject = () => {
+        setProjects([
+            ...projects,
+            {
+                title: '',
+                bulletPoints: [{ content: '' }],
+            },
+        ]);
+    };
+
+    const removeProject = async (index) => {
+        const proj = projects[index];
+
+        if (proj.id) {
+            const res = await fetch(`/api/resume/project?id=${proj.id}`, {
+                method: 'DELETE',
+            });
+
+            if (!res.ok) {
+                return alert('Failed to delete project');
+            }
+        }
+
+        setProjects(projects.filter((_, i) => i !== index));
+    };
+
+    const handleSubmit = async (e, proj, index) => {
         e.preventDefault();
 
-        if (!resumeId || isNaN(resumeId)) {
-            alert('Invalid resume ID');
-            return;
-        }
+        const method = proj.id ? 'PUT' : 'POST';
 
-        const projectRes = await fetch('/api/resume/project', {
-            method: 'POST',
-            body: JSON.stringify({ resumeId, title }),
-            headers: {
-                'Content-Type': 'application/json',
-            },
+        const res = await fetch('/api/resume/project', {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: proj.id,
+                resumeId,
+                title: proj.title,
+            }),
         });
 
-        if (!projectRes.ok) return alert('Failed to save project');
-
-        const { project } = await projectRes.json();
+        if (!res.ok) return alert('Failed to save project');
+        const { project } = await res.json();
 
         const bulletRes = await Promise.all(
-            bulletPoints
-                .filter((point) => point.trim() !== '')
-                .map((content) =>
-                    fetch('/api/resume/bullet', {
-                        method: 'POST',
-                        body: JSON.stringify({ projectId: project.id, content }),
-                        headers: { 'Content-Type': 'application/json' },
-                    })
-                )
+            proj.bulletPoints
+                .filter((b) => b.content.trim() !== '')
+                .map((b) => {
+                    if (b.id) {
+                        return fetch('/api/resume/bullet', {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id: b.id, content: b.content }),
+                        });
+                    } else {
+                        return fetch('/api/resume/bullet', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ projectId: project.id, content: b.content }),
+                        });
+                    }
+                })
         );
 
-        if (bulletRes.every((res) => res.ok)) {
-            router.push(`/resume/${resumeId}/skills`); 
-        } else {
-            alert('Some bullet points failed to save');
+        if (!bulletRes.every((res) => res.ok)) {
+            return alert('Some bullet points failed to save');
         }
+
+        alert('Project saved!');
     };
 
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
+                <p className="text-lg font-medium text-gray-600 dark:text-gray-300">
+                    Loading project data...
+                </p>
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen flex items-start justify-center px-4 py-8 bg-white dark:bg-black">
-            <form
-                onSubmit={handleSubmit}
-                className="w-full max-w-2xl bg-white dark:bg-black p-6 rounded-md shadow-md text-gray-900 dark:text-gray-100"
-            >
-                <div className="space-y-12">
-                    <div className="border-b border-gray-300 dark:border-gray-700 pb-12">
-                        <h2 className="text-base font-semibold">Projects</h2>
-                        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                            Add a project you worked on and describe your contributions.
-                        </p>
+        <div className="min-h-screen px-4 py-8 bg-white dark:bg-black text-gray-900 dark:text-gray-100">
+            <h2 className="text-2xl font-bold mb-6 text-center">Projects</h2>
 
-                        {/* Project Title */}
-                        <div className="mt-6">
-                            <label htmlFor="title" className="block text-sm font-medium">
-                                Project Title
-                            </label>
-                            <input
-                                id="title"
-                                name="title"
-                                type="text"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                placeholder="e.g. AI Resume Builder"
-                                required
-                                className="mt-2 block w-full rounded-md bg-white dark:bg-gray-800 px-3 py-1.5"
-                            />
-                        </div>
+            {projects.length === 0 && (
+                <div className="flex justify-center">
+                    <button
+                        onClick={addProject}
+                        className="text-sm text-indigo-600 dark:text-indigo-400 font-medium"
+                    >
+                        + Add Project
+                    </button>
+                </div>
+            )}
 
-                        {/* Bullet Points */}
-                        <div className="mt-6">
-                            <label className="block text-sm font-medium">Bullet Points</label>
-                            <div className="mt-2 space-y-3">
-                                {bulletPoints.map((point, index) => (
-                                    <div key={index} className="flex gap-2">
-                                        <textarea
-                                            value={point}
-                                            onChange={(e) => handleBulletChange(index, e.target.value)}
-                                            placeholder={`Bullet point ${index + 1}`}
-                                            required
-                                            className="flex-grow rounded-md bg-white dark:bg-gray-800 px-3 py-1.5 text-base text-gray-900 dark:text-white outline outline-1 outline-gray-300 dark:outline-gray-600"
-                                        />
-                                        {bulletPoints.length > 1 && (
-                                            <button type="button" onClick={() => removeBullet(index)} className="text-red-500">
-                                                ✕
-                                            </button>
-                                        )}
-                                    </div>
-                                ))}
-                                <button
-                                    type="button"
-                                    onClick={addBullet}
-                                    className="text-sm text-indigo-600 dark:text-indigo-400 font-medium"
-                                >
-                                    + Add another bullet point
-                                </button>
-                            </div>
+            {projects.map((proj, index) => (
+                <form
+                    key={index}
+                    onSubmit={(e) => handleSubmit(e, proj, index)}
+                    className="max-w-2xl mx-auto mb-10 bg-white dark:bg-gray-900 p-6 rounded-md shadow-md space-y-6"
+                >
+                    <h3 className="text-base font-semibold">Project {index + 1}</h3>
+
+                    <input
+                        type="text"
+                        name="title"
+                        value={proj.title}
+                        onChange={(e) => handleTitleChange(index, e.target.value)}
+                        placeholder="e.g. AI Resume Builder"
+                        required
+                        className="w-full rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                    />
+
+                    <div>
+                        <label className="block mb-1 text-sm font-medium">Bullet Points</label>
+                        <div className="space-y-3">
+                            {proj.bulletPoints.map((point, i) => (
+                                <div key={point.id || i} className="flex gap-2">
+                                    <textarea
+                                        value={point.content}
+                                        onChange={(e) => handleBulletChange(index, i, e.target.value)}
+                                        placeholder={`Bullet point ${i + 1}`}
+                                        required
+                                        className="flex-grow rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                                    />
+                                    {proj.bulletPoints.length > 1 && (
+                                        <button
+                                            type="button"
+                                            onClick={() => removeBullet(index, i)}
+                                            className="text-red-500"
+                                        >
+                                            ✕
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
+                            <button
+                                type="button"
+                                onClick={() => addBullet(index)}
+                                className="text-sm text-indigo-600 dark:text-indigo-400 font-medium"
+                            >
+                                + Add another bullet point
+                            </button>
                         </div>
                     </div>
-                </div>
 
-                {/* Actions */}
-                <div className="mt-6 flex items-center justify-end gap-x-6">
-                    <button onClick={() => router.back()} type="button" className="text-sm font-semibold text-gray-900 dark:text-white">
-                        Back
-                    </button>
+                    <div className="flex justify-between items-center">
+                        <button
+                            type="button"
+                            onClick={() => removeProject(index)}
+                            className="text-red-500 text-sm"
+                        >
+                            Remove Project
+                        </button>
+                        <button
+                            type="submit"
+                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
+                        >
+                            Save Project
+                        </button>
+                    </div>
+                </form>
+            ))}
+
+            {projects.length > 0 && (
+                <div className="flex justify-center mt-4">
                     <button
-                        type="submit"
-                        className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
+                        onClick={addProject}
+                        className="text-sm text-indigo-600 dark:text-indigo-400 font-medium"
                     >
-                        Save Project
+                        + Add Another Project
                     </button>
                 </div>
-            </form>
+            )}
+
+            <div className="flex justify-end mt-8 max-w-2xl mx-auto">
+                <button
+                    onClick={() => router.back()}
+                    className="rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-600 mr-4"
+                >
+                    Back
+                </button>
+                <button
+                    onClick={() => router.push(`/resume/skills?resumeId=${resumeId}`)}
+                    className="rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-600"
+                >
+                    Continue to Skills
+                </button>
+            </div>
         </div>
     );
 }

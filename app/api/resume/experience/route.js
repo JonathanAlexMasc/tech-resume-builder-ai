@@ -91,3 +91,31 @@ export async function DELETE(req) {
         return new Response('Failed to delete experience', { status: 500 });
     }
 }
+
+export async function PUT(req) {
+    try {
+        const body = await req.json();
+        const { id, resumeId, role, company, location, startDate, endDate } = body;
+
+        if (!id) {
+            return new Response('Missing experience ID', { status: 400 });
+        }
+
+        const updated = await prisma.experience.update({
+            where: { id },
+            data: {
+                resumeId,
+                role,
+                company,
+                location,
+                startDate: new Date(startDate),
+                endDate: endDate ? new Date(endDate) : null,
+            },
+        });
+
+        return Response.json({ experience: updated });
+    } catch (err) {
+        console.error('[PUT /api/resume/experience]', err);
+        return new Response('Failed to update experience', { status: 500 });
+    }
+}
