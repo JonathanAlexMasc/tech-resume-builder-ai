@@ -16,7 +16,7 @@ export default function EducationForm() {
         async function fetchEducations() {
             if (!resumeId) return;
 
-            const res = await fetch(`/api/resume/education/resumeId=${resumeId}`);
+            const res = await fetch(`/api/resume/education?resumeId=${resumeId}`);
             if (!res.ok) {
                 console.error('Failed to load education');
                 setLoading(false);
@@ -220,7 +220,7 @@ export default function EducationForm() {
                     Back
                 </button>
                 <button
-                    onClick={() => router.push(`/api/resume/download?resumeId=${resumeId}`)}
+                    onClick={() => router.push(`/resume/download?resumeId=${resumeId}`)}
                     className="rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-600"
                 >
                     Download Resume
