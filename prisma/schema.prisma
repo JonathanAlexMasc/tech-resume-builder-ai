@@ -53,15 +53,14 @@ model VerificationToken {
 }
 
 model Resume {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
+  name      String   
   userId    String
-  user      User    @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
-  createdAt DateTime     @default(now())
+  createdAt DateTime @default(now())
 
-  // Remove foreign key from here
-  header    Header?      @relation
-
+  header    Header?  @relation
   Experience Experience[]
   projects   Project[]
   skills     Skill[]

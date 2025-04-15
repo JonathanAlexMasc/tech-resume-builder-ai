@@ -90,3 +90,28 @@ export async function PUT(req) {
         return new Response('Failed to update education', { status: 500 });
     }
 }
+
+export async function DELETE(req) {
+    try {
+        const session = await auth();
+        if (!session || !session.user?.email) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const { searchParams } = new URL(req.url);
+        const id = parseInt(searchParams.get('id'));
+
+        if (!id || isNaN(id)) {
+            return NextResponse.json({ error: 'Missing or invalid education ID' }, { status: 400 });
+        }
+
+        await prisma.education.delete({
+            where: { id },
+        });
+
+        return NextResponse.json({ message: 'Education deleted successfully' }, { status: 200 });
+    } catch (error) {
+        console.error('[DELETE /api/resume/education]', error);
+        return NextResponse.json({ error: 'Failed to delete education' }, { status: 500 });
+    }
+}

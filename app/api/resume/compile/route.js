@@ -50,7 +50,8 @@ export async function POST(req) {
     return fetch('https://latex-pdf-conversion-service-production.up.railway.app/compile', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_LATEX_AUTH_TOKEN}`,
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify({ tex: texFilled })
     })

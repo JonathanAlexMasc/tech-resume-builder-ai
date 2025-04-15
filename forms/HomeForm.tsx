@@ -65,23 +65,62 @@ export default function HomePage() {
                     </p>
                 ) : (
                     <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-                        {resumes.map((resume) => (
-                            <div
-                                key={resume.id}
-                                className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition"
-                            >
-                                <h3 className="text-xl font-semibold mb-4">
-                                    {resume.title || "Untitled Resume"}
-                                </h3>
-                                <Link
-                                    href={`/resume/header?resumeId=${resume.id}`}
-                                    className="inline-flex items-center gap-2 text-sm font-medium text-white bg-black dark:bg-white dark:text-black px-4 py-2 rounded-md hover:bg-gray-800 dark:hover:bg-gray-200 transition"
-                                >
-                                    <FaEdit />
-                                    Edit Resume
-                                </Link>
-                            </div>
-                        ))}
+                                {resumes.map((resume) => (
+                                    <div
+                                        key={resume.id}
+                                        className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition space-y-4"
+                                    >
+                                        <input
+                                            type="text"
+                                            value={resume.name || ''}
+                                            onChange={(e) => {
+                                                const updated = resumes.map((r) =>
+                                                    r.id === resume.id ? { ...r, name: e.target.value } : r
+                                                );
+                                                setResumes(updated);
+                                            }}
+                                            placeholder="Resume Name"
+                                            className="w-full rounded-md bg-white dark:bg-gray-800 px-3 py-2 border"
+                                        />
+
+                                        <div className="flex justify-between items-center">
+                                            <Link
+                                                href={`/resume/header?resumeId=${resume.id}`}
+                                                className="inline-flex items-center gap-2 text-sm font-medium text-white bg-black dark:bg-white dark:text-black px-4 py-2 rounded-md hover:bg-gray-800 dark:hover:bg-gray-200 transition"
+                                            >
+                                                <FaEdit />
+                                                Edit
+                                            </Link>
+
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={async () => {
+                                                        await fetch(`/api/resume`, {
+                                                            method: 'PUT',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify({ id: resume.id, name: resume.name }),
+                                                        });
+                                                    }}
+                                                    className="text-sm px-3 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-500"
+                                                >
+                                                    Save Name
+                                                </button>
+
+                                                <button
+                                                    onClick={async () => {
+                                                        await fetch(`/api/resume?id=${resume.id}`, {
+                                                            method: 'DELETE',
+                                                        });
+                                                        setResumes(resumes.filter((r) => r.id !== resume.id));
+                                                    }}
+                                                    className="text-sm px-3 py-2 rounded-md bg-red-600 text-white hover:bg-red-500"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                     </div>
                 )}
             </div>
