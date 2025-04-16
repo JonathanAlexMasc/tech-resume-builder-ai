@@ -128,6 +128,12 @@ export default function ProjectForm() {
         if (!res.ok) return alert('Failed to save project');
         const { project } = await res.json();
 
+        // ✅ Update local project ID after creation
+        const updatedProjects = [...projects];
+        updatedProjects[index].id = project.id;
+        setProjects(updatedProjects);
+
+        // Save bullet points
         const bulletRes = await Promise.all(
             proj.bulletPoints
                 .filter((b) => b.content.trim() !== '')

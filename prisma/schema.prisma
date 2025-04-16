@@ -15,7 +15,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  resumes       Resume[] // 👈 updated to camelCase plural
+  resumes       Resume[] 
 }
 
 model Account {
@@ -60,7 +60,7 @@ model Resume {
 
   createdAt DateTime @default(now())
 
-  header    Header?  @relation
+  header    Header?  
   Experience Experience[]
   projects   Project[]
   skills     Skill[]
@@ -76,7 +76,7 @@ model Header {
   github    String?
 
   resumeId  Int    @unique
-  resume    Resume @relation(fields: [resumeId], references: [id])
+  resume    Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 }
 
 model Experience {
