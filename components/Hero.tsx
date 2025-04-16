@@ -17,12 +17,6 @@ export default function Hero() {
         >
           Get Started
         </Link>
-        <Link
-          href="https://github.com"
-          className="bg-black text-white dark:bg-white dark:text-black px-5 py-2 rounded-md text-base font-semibold hover:bg-gray-800 dark:hover:bg-gray-200 transition duration-300"
-        >
-          View on GitHub
-        </Link>
       </div>
     </section>
   );

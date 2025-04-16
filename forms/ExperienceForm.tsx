@@ -12,6 +12,35 @@ export default function ExperienceForm() {
     const [experiences, setExperiences] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const [suggestionsMap, setSuggestionsMap] = useState({});
+    const [loadingSuggestions, setLoadingSuggestions] = useState(null); // tracks loading index
+
+    const fetchSuggestions = async (expIndex, bulletIndex) => {
+        const { role, company, bulletPoints } = experiences[expIndex];
+        const bulletText = bulletPoints[bulletIndex].content;
+
+        setLoadingSuggestions(`${expIndex}-${bulletIndex}`);
+
+        const res = await fetch('/api/suggest', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                role,
+                company,
+                rawBulletPoint: bulletText,
+            }),
+        });
+
+        const data = await res.json();
+
+        setSuggestionsMap(prev => ({
+            ...prev,
+            [`${expIndex}-${bulletIndex}`]: data.suggestions || [],
+        }));
+
+        setLoadingSuggestions(null);
+    };
+
     useEffect(() => {
         async function fetchExperiences() {
             if (!resumeId) return;
@@ -243,22 +272,46 @@ export default function ExperienceForm() {
                         <label className="block mb-1 text-sm font-medium">Bullet Points</label>
                         <div className="space-y-3">
                             {exp.bulletPoints.map((point, i) => (
-                                <div key={point.id || i} className="flex gap-2">
-                                    <textarea
-                                        value={point.content}
-                                        onChange={(e) => handleBulletChange(index, i, e.target.value)}
-                                        placeholder={`Bullet point ${i + 1}`}
-                                        required
-                                        className="flex-grow rounded-md px-3 py-2 bg-white dark:bg-gray-800"
-                                    />
-                                    {exp.bulletPoints.length > 1 && (
+                                <div key={point.id || i} className="flex flex-col gap-1">
+                                    <div className="flex gap-2">
+                                        <textarea
+                                            value={point.content}
+                                            onChange={(e) => handleBulletChange(index, i, e.target.value)}
+                                            placeholder={`Bullet point ${i + 1}`}
+                                            required
+                                            className="flex-grow rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                                        />
+                                        {exp.bulletPoints.length > 1 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => removeBullet(index, i)}
+                                                className="text-red-500"
+                                            >
+                                                ✕
+                                            </button>
+                                        )}
                                         <button
                                             type="button"
-                                            onClick={() => removeBullet(index, i)}
-                                            className="text-red-500"
+                                            onClick={() => fetchSuggestions(index, i)}
+                                            className="text-blue-500 text-sm px-2"
                                         >
-                                            ✕
+                                            ✨
                                         </button>
+                                    </div>
+
+                                    {/* Show suggestions */}
+                                    {loadingSuggestions === `${index}-${i}` ? (
+                                        <p className="text-xs text-gray-500">Loading suggestions...</p>
+                                    ) : (
+                                        suggestionsMap[`${index}-${i}`]?.map((sug, si) => (
+                                            <button
+                                                key={si}
+                                                onClick={() => handleBulletChange(index, i, sug)}
+                                                className="text-left text-sm bg-gray-100 dark:bg-gray-700 p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 w-full"
+                                            >
+                                                {sug}
+                                            </button>
+                                        ))
                                     )}
                                 </div>
                             ))}
