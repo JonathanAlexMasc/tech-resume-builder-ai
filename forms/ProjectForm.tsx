@@ -147,8 +147,6 @@ export default function ProjectForm() {
         if (!bulletRes.every((res) => res.ok)) {
             return alert('Some bullet points failed to save');
         }
-
-        alert('Project saved!');
     };
 
     const fetchSuggestions = async (projIndex, bulletIndex) => {

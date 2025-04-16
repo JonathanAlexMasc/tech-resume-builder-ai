@@ -97,8 +97,6 @@ export default function EducationForm() {
         });
 
         if (!res.ok) return alert('Failed to save education');
-
-        alert('Education saved!');
     };
 
     if (loading) {

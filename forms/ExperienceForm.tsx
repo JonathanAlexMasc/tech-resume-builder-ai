@@ -186,8 +186,6 @@ export default function ExperienceForm() {
         if (!bulletRes.every((res) => res.ok)) {
             return alert('Some bullet points failed to save');
         }
-
-        alert('Experience saved!');
     };
 
     if (loading) {
