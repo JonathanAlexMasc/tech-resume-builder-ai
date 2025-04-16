@@ -1,12 +1,29 @@
 const { PrismaClient } = require('@prisma/client');
-const { writeFileSync, readFileSync} = require('fs');
+const { writeFileSync, readFileSync, existsSync, mkdirSync, appendFileSync } = require('fs');
 const path = require('path');
 const tmp = require('tmp');
 const prisma = new PrismaClient();
 
-import { escapeLatex, renderExperience, renderProjects, renderEducation, renderSkills, logErrorToFile, logLatexToFile } from '@/helpers';
+import { escapeLatex, renderExperience, renderProjects, renderEducation, renderSkills } from '@/helpers';
 
-// Main POST endpoint
+function logLatexToFile(resumeId, tex) {
+    const logsDir = path.join('/tmp', 'logs');
+    if (!existsSync(logsDir)) {
+        mkdirSync(logsDir);
+    }
+    const filePath = path.join(logsDir, `resume-${resumeId}.tex`);
+    writeFileSync(filePath, tex);
+}
+
+function logErrorToFile(error) {
+    const logsDir = path.join('/tmp', 'logs');
+    if (!existsSync(logsDir)) {
+        mkdirSync(logsDir);
+    }
+    const filePath = path.join(logsDir, 'error.log');
+    appendFileSync(filePath, `[${new Date().toISOString()}] ${error}\n`);
+}
+
 export async function POST(req) {
     const body = await req.json();
     const { resumeId } = body;
@@ -40,7 +57,7 @@ export async function POST(req) {
         .replace(/%%%PROJECTS%%%/, renderProjects(resume.projects))
         .replace(/%%%EDUCATION%%%/, renderEducation(resume.education))
         .replace(/%%%SKILLS%%%/, renderSkills(resume.skills));
-    
+
     logLatexToFile(resumeId, texFilled);
 
     const tempDir = tmp.dirSync({ unsafeCleanup: true });
