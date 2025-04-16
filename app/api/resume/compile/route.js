@@ -7,7 +7,8 @@ const prisma = new PrismaClient();
 import { escapeLatex, renderExperience, renderProjects, renderEducation, renderSkills } from '@/helpers';
 
 function logLatexToFile(resumeId, tex) {
-    const logsDir = path.join('/tmp', 'logs');
+    const logsDir = path.join('logs');
+    // const logsDir = path.join('/tmp', 'logs');
     if (!existsSync(logsDir)) {
         mkdirSync(logsDir);
     }
@@ -16,7 +17,8 @@ function logLatexToFile(resumeId, tex) {
 }
 
 function logErrorToFile(error) {
-    const logsDir = path.join('/tmp', 'logs');
+    const logsDir = path.join('logs');
+    // const logsDir = path.join('/tmp', 'logs');
     if (!existsSync(logsDir)) {
         mkdirSync(logsDir);
     }
@@ -31,6 +33,7 @@ export async function POST(req) {
     const resume = await prisma.resume.findUnique({
         where: { id: resumeId },
         include: {
+            header: true,
             Experience: { include: { bulletPoints: true } },
             projects: { include: { bulletPoints: true } },
             education: true,
@@ -49,10 +52,16 @@ export async function POST(req) {
     const texContent = readFileSync(templatePath, 'utf8');
 
     const texFilled = texContent
-        .replace(/%%%NAME%%%/, escapeLatex(`${resume.firstName} ${resume.lastName}`))
-        .replace(/%%%PHONE%%%/, escapeLatex(resume.phone || ''))
-        .replace(/%%%LINKEDIN%%%/, resume.linkedin ? `\\href{${resume.linkedin}}{${escapeLatex(resume.linkedin)}}` : '')
-        .replace(/%%%GITHUB%%%/, resume.github ? `\\href{${resume.github}}{${escapeLatex(resume.github)}}` : '')
+        .replace(/%%%NAME%%%/, escapeLatex(`${resume.header?.firstName ?? ''} ${resume.header?.lastName ?? ''}`))
+        .replace(/%%%PHONE%%%/, escapeLatex(resume.header?.phone ?? ''))
+        .replace(
+            /%%%LINKEDIN%%%/,
+            resume.header?.linkedin ? `\\href{${resume.header.linkedin}}{${escapeLatex(resume.header.linkedin)}}` : ''
+        )
+        .replace(
+            /%%%GITHUB%%%/,
+            resume.header?.github ? `\\href{${resume.header.github}}{${escapeLatex(resume.header.github)}}` : ''
+        )
         .replace(/%%%EXPERIENCE%%%/, renderExperience(resume.Experience))
         .replace(/%%%PROJECTS%%%/, renderProjects(resume.projects))
         .replace(/%%%EDUCATION%%%/, renderEducation(resume.education))
@@ -63,6 +72,11 @@ export async function POST(req) {
     const tempDir = tmp.dirSync({ unsafeCleanup: true });
     const texFilePath = path.join(tempDir.name, 'resume.tex');
     writeFileSync(texFilePath, texFilled);
+
+    // return fetch('http://localhost:3001/compile'
+    /*
+    return fetch('https://latex-pdf-conversion-service-production.up.railway.app/compile',
+    */
 
     return fetch('https://latex-pdf-conversion-service-production.up.railway.app/compile', {
         method: 'POST',

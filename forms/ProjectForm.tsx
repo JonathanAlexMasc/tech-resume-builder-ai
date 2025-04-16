@@ -28,6 +28,8 @@ export default function ProjectForm() {
 
             const data = await res.json();
 
+            // console.log("Data from GET: ", data)
+
             if (data.projects?.length > 0) {
                 setProjects(
                     data.projects.map((p) => ({
@@ -110,6 +112,8 @@ export default function ProjectForm() {
         e.preventDefault();
 
         const method = proj.id ? 'PUT' : 'POST';
+
+        // console.log("Project ID: ", proj)
 
         const res = await fetch('/api/resume/project', {
             method,
