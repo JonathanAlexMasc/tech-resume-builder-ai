@@ -7,9 +7,13 @@ const prisma = new PrismaClient();
 import { escapeLatex, renderExperience, renderProjects, renderEducation, renderSkills } from '@/helpers';
 
 function logLatexToFile(resumeId, tex) {
+    console.log("ENV: ", process.env.NODE_ENV)
+
     const logsDir = process.env.NODE_ENV === 'development'
         ? path.join('logs')           // local relative path
         : path.join('/tmp', 'logs');   // absolute tmp path for production
+    
+    console.log("LOGS DIR: ", logsDir)
     if (!existsSync(logsDir)) {
         mkdirSync(logsDir);
     }
