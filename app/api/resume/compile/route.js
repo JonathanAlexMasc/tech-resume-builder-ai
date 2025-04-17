@@ -7,8 +7,9 @@ const prisma = new PrismaClient();
 import { escapeLatex, renderExperience, renderProjects, renderEducation, renderSkills } from '@/helpers';
 
 function logLatexToFile(resumeId, tex) {
-    const logsDir = path.join('logs');
-    // const logsDir = path.join('/tmp', 'logs');
+    const logsDir = process.env.NODE_ENV === 'development'
+        ? path.join('logs')           // local relative path
+        : path.join('/tmp', 'logs');   // absolute tmp path for production
     if (!existsSync(logsDir)) {
         mkdirSync(logsDir);
     }
@@ -17,8 +18,9 @@ function logLatexToFile(resumeId, tex) {
 }
 
 function logErrorToFile(error) {
-    const logsDir = path.join('logs');
-    // const logsDir = path.join('/tmp', 'logs');
+    const logsDir = process.env.NODE_ENV === 'development'
+        ? path.join('logs')           // local relative path
+        : path.join('/tmp', 'logs');   // absolute tmp path for production
     if (!existsSync(logsDir)) {
         mkdirSync(logsDir);
     }
