@@ -53,7 +53,6 @@ export default function Page() {
             </div>
           }
         />
-        <Reviews />
       </main>
       <Footer />
     </div>
