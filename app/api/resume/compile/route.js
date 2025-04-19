@@ -76,12 +76,11 @@ export async function POST(req) {
     const texFilePath = path.join(tempDir.name, 'resume.tex');
     writeFileSync(texFilePath, texFilled);
 
-    // return fetch('http://localhost:3001/compile'
-    /*
-    return fetch('https://latex-pdf-conversion-service-production.up.railway.app/compile',
-    */
+    const compilePath = process.env.NODE_ENV === 'development'
+        ? 'http://localhost:3001/compile'           
+        : 'https://latex-pdf-conversion-service-production.up.railway.app/compile';
 
-    return fetch('https://latex-pdf-conversion-service-production.up.railway.app/compile', {
+    return fetch(compilePath, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${process.env.NEXT_PUBLIC_LATEX_AUTH_TOKEN}`,
