@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "FAANG Resume Builder AI",
+  title: "Tech Resume Builder AI",
   description: "Tool for building technical resumes",
 };
 

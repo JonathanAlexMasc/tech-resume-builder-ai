@@ -13,7 +13,7 @@ export default async function Header() {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link href='/'>
           <div className="flex items-center">
-            <span className="text-xl dark:text-gray-100">FAANG Resume Builder AI</span>
+            <span className="text-xl dark:text-gray-100">Tech Resume Builder AI</span>
           </div>
         </Link>
         

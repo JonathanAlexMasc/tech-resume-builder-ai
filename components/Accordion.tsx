@@ -48,7 +48,7 @@ const defaultAccordionItems = [
   {
     title: "Smart suggestions powered by AI",
     content:
-      "Generate role-specific bullet points and summaries trained on FAANG-level resumes. Say goodbye to writer’s block.",
+      "Generate role-specific bullet points and summaries trained on the best resumes. Say goodbye to writer’s block.",
   },
   {
     title: "LaTeX-quality output",

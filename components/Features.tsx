@@ -8,7 +8,7 @@ const Features = () => {
     {
       icon: FaRobot,
       title: "AI-Powered Suggestions",
-      description: "Get intelligent, role-specific bullet points written by AI trained on FAANG-level resumes.",
+      description: "Get intelligent, role-specific bullet points written by AI trained on resumes that were accepted into big tech.",
     },
     {
       icon: SiLatex,
@@ -43,7 +43,7 @@ const Features = () => {
         <div className="text-center">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-900 dark:text-white mb-4">Features</h2>
           <p className="mt-8 text-xl text-gray-600 dark:text-gray-300 font-light">
-            Built by FAANG engineers to help you craft the perfect tech resume in minutes. Powered by AI. Output as LaTeX.
+            Built by engineers at top tech companies to help you craft the perfect resume in minutes and land interviews.
           </p>
         </div>
         <div className="mt-10">

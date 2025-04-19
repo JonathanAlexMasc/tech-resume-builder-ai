@@ -20,17 +20,17 @@ export default function Page() {
           leftHalf={
             <>
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-900 dark:text-white mb-4">
-                Build FAANG-ready resumes in minutes
+                Build high quality resumes in minutes
               </h2>
               <p className="text-xl font-light">
-                Designed by FAANG engineers, our AI resume builder helps you craft tailored, ATS-friendly resumes with
+                Designed by engineers at big tech, our AI resume builder helps you craft tailored, ATS-friendly resumes with
                 clean LaTeX formatting and smart content suggestions — no design skills needed.
               </p>
             </>
           }
           rightHalf={
             <Image
-              src={"/products/phone.png"}
+              src={"/products/jake.jpeg"}
               alt="Resume builder preview"
               width={500}
               height={100}
@@ -48,7 +48,7 @@ export default function Page() {
               </h2>
               <p className="text-xl font-light">
                 Explore the features that make our resume builder stand out — from intelligent bullet point generation
-                and sleek LaTeX output, to version tracking and secure cloud storage. All built with FAANG-level precision.
+                and sleek LaTeX output, to version tracking and secure cloud storage.
               </p>
             </div>
           }

@@ -8,7 +8,7 @@ export default function Hero() {
         Build the Perfect Tech Resume — Fast.
       </h1>
       <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 font-light">
-        An AI-powered resume builder designed by FAANG engineers. Create clean, LaTeX-based resumes optimized for developer roles and ATS systems — in minutes.
+        An AI-powered resume builder designed by big tech engineers. Create clean, LaTeX-based resumes optimized for developer roles and ATS systems — in minutes.
       </p>
       <div className="flex justify-center space-x-6">
         <Link
