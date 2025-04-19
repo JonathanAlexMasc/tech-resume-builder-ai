@@ -11,6 +11,7 @@ export default function ProjectForm() {
 
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [savedStates, setSavedStates] = useState({});
 
     const [suggestionsMap, setSuggestionsMap] = useState({});
     const [loadingSuggestions, setLoadingSuggestions] = useState(null); // track loading key
@@ -126,6 +127,20 @@ export default function ProjectForm() {
         });
 
         if (!res.ok) return alert('Failed to save project');
+
+        // ✅ After successfully saving project and bullets
+        setSavedStates(prev => ({
+            ...prev,
+            [index]: true,
+        }));
+
+        setTimeout(() => {
+            setSavedStates(prev => ({
+                ...prev,
+                [index]: false,
+            }));
+        }, 3000); // Saved! message disappears after 3 seconds
+
         const { project } = await res.json();
 
         // ✅ Update local project ID after creation
@@ -293,12 +308,18 @@ export default function ProjectForm() {
                         >
                             Remove Project
                         </button>
-                        <button
-                            type="submit"
-                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
-                        >
-                            Save Project
-                        </button>
+
+                        <div className="flex items-center gap-4">
+                            {savedStates[index] && (
+                                <p className="text-green-500 text-sm font-medium">Saved!</p>
+                            )}
+                            <button
+                                type="submit"
+                                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
+                            >
+                                Save Project
+                            </button>
+                        </div>
                     </div>
                 </form>
             ))}
