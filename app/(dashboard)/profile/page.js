@@ -1,6 +1,6 @@
 import Footer from "@/components/Footer"
 import Header from "@/components/Header"
-import ProfilePage from "@/pages/ProfilePage"
+import ProfilePage from "@/ui/ProfilePage"
 
 export default function Profile() {
     return (

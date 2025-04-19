@@ -5,7 +5,7 @@ import Image from 'next/image';
 import AuthRedirectMessage from '@/components/AuthRedirectMessage';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import HomePage from '@/pages/HomePage';
+import HomePage from '@/ui/HomePage';
 
 const LandingPage = async () => {
     const session = await auth();
