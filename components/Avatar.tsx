@@ -11,7 +11,7 @@ export default async function Avatar() {
     const imageUrl = user?.image || "https://via.placeholder.com/150";
     
     return (
-        <Menu as="div" className="relative inline-block text-left">
+        <Menu as="div" className="relative inline-block text-left z-50">
             <div>
                 <MenuButton className="inline-block size-10 rounded-full ring-2 ring-white">
                     <div className="flex -space-x-2 overflow-hidden">
@@ -37,6 +37,14 @@ export default async function Avatar() {
                             Profile
                         </a>
                     </MenuItem>
+                    <MenuItem>
+                        <a
+                            href="/resume"
+                            className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden"
+                        >
+                            Your Resumes
+                        </a>
+                    </MenuItem>
                 </div>
                 <div className="py-1">
                     <MenuItem>
@@ -52,7 +60,7 @@ export default async function Avatar() {
                             href="#"
                             className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden"
                         >
-                            Move
+                            Referral
                         </a>
                     </MenuItem>
                 </div>
@@ -62,15 +70,7 @@ export default async function Avatar() {
                             href="#"
                             className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden"
                         >
-                            Share
-                        </a>
-                    </MenuItem>
-                    <MenuItem>
-                        <a
-                            href="#"
-                            className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden"
-                        >
-                            Add to favorites
+                            About Us
                         </a>
                     </MenuItem>
                 </div>
