@@ -4,6 +4,7 @@ import React from "react";
 import LoginDropdown from "./LoginForm";
 import { auth } from "@/auth";
 import Logout from "./Logout";
+import Avatar from "./Avatar";
 
 export default async function Header() {
   const session = await auth();
@@ -16,14 +17,14 @@ export default async function Header() {
             <span className="text-xl dark:text-gray-100">Tech Resume Builder AI</span>
           </div>
         </Link>
-        
+
         <nav className="flex items-center">
           <ul className="flex space-x-2 mr-2">
             {!session ? <li>
               <LoginDropdown />
             </li> : 
               <li>
-                <Logout />
+                <Avatar />
               </li>
             }
             

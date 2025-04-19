@@ -5,7 +5,7 @@ import { FaSignOutAlt } from 'react-icons/fa';
 
 const Logout = () => {
     return (
-        <form action={logoutAction} className="flex justify-center">
+        <form action={logoutAction} className="flex justify-start">
             <button
                 type="submit"
                 className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md shadow transition"
