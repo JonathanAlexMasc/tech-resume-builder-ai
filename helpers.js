@@ -63,7 +63,7 @@ function renderSkills(skills) {
   \\textbf{Languages}{: ${filter('isLanguage')}} \\\\
   \\textbf{Frameworks}{: ${filter('isFramework')}} \\\\
   \\textbf{Developer Tools}{: ${filter('isDev')}} \\\\
-  \\textbf{Cloud \\& Concepts}{: ${filter('isCloud')}}
+  \\textbf{Cloud}{: ${filter('isCloud')}}
 }}
 \\end{itemize}
 `;

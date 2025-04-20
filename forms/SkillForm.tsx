@@ -37,8 +37,6 @@ export default function SkillForm() {
 
     const handleChange = (index, field, value) => {
         const updated = [...skills];
-
-        // Ensure only one checkbox is selected
         if (['isLanguage', 'isFramework', 'isDev', 'isCloud'].includes(field)) {
             updated[index] = {
                 ...updated[index],
@@ -51,35 +49,26 @@ export default function SkillForm() {
         } else {
             updated[index][field] = value;
         }
-
         setSkills(updated);
     };
 
     const addSkill = () => {
-        if (skills.length < 10) {
-            setSkills([...skills, { name: '', isLanguage: false, isFramework: false, isDev: false, isCloud: false }]);
-        }
+        setSkills([...skills, { name: '', isLanguage: false, isFramework: false, isDev: false, isCloud: false }]);
     };
 
     const removeSkill = async (index) => {
         const skill = skills[index];
-
         if (skill.id) {
-            const res = await fetch(`/api/resume/skill?id=${skill.id}`, {
-                method: 'DELETE',
-            });
-
+            const res = await fetch(`/api/resume/skill?id=${skill.id}`, { method: 'DELETE' });
             if (!res.ok) {
                 return alert('Failed to delete skill');
             }
         }
-
         setSkills(skills.filter((_, i) => i !== index));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         const validSkills = skills.filter(skill => skill.name.trim() !== '');
         const responses = await Promise.all(
             validSkills.map((skill) => {
@@ -118,7 +107,7 @@ export default function SkillForm() {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6 max-w-xl mx-auto py-8">
-            <h2 className="text-lg font-semibold">Add up to 10 Skills</h2>
+            <h2 className="text-lg font-semibold">Add Your Skills</h2>
 
             {skills.map((skill, index) => (
                 <div key={skill.id || index} className="border border-gray-300 dark:border-gray-700 p-4 rounded-md space-y-4">
@@ -175,15 +164,15 @@ export default function SkillForm() {
                 </div>
             ))}
 
-            {skills.length < 10 && (
+            <div className="flex justify-start">
                 <button
                     type="button"
                     onClick={addSkill}
-                    className="text-sm mr-5 text-indigo-600 dark:text-indigo-400 font-medium"
+                    className="text-sm text-indigo-600 dark:text-indigo-400 font-medium"
                 >
                     + Add another skill
                 </button>
-            )}
+            </div>
 
             <div className="mt-6 flex items-center justify-end gap-x-6">
                 <button onClick={() => router.back()} type="button" className="text-sm font-semibold text-gray-900 dark:text-white mr-2">
