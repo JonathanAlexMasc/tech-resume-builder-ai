@@ -59,6 +59,7 @@ model Resume {
   user      User     @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   header    Header?  
   Experience Experience[]
