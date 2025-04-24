@@ -97,7 +97,7 @@ export default function HomePage() {
                         <li
                             key={resume.id}
                             className="flex justify-between gap-x-6 my-3 p-5 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition-all duration-200 cursor-pointer"
-                            onClick={() => router.push(`/resume/header?resumeId=${resume.id}`)}
+                            onClick={() => router.push(`/resume/collection?resumeId=${resume.id}`)}
                         >
                             <div className="min-w-0 flex-auto">
                                 {editingId === resume.id ? (

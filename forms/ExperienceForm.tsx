@@ -213,7 +213,7 @@ export default function ExperienceForm() {
     }
 
     return (
-        <div className="min-h-screen px-4 py-8 bg-white dark:bg-black text-gray-900 dark:text-gray-100">
+        <div className="px-4 py-8 bg-white dark:bg-black text-gray-900 dark:text-gray-100">
             <h2 className="text-2xl font-bold mb-6 text-center">Experience</h2>
 
             {experiences.length === 0 && (

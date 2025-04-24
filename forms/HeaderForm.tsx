@@ -87,14 +87,11 @@ export default function HeaderForm() {
     }
 
     return (
-        <div className="min-h-screen flex items-start justify-center px-4 py-8 bg-white dark:bg-black">
+        <div className="flex items-start justify-center px-4 py-4 bg-white dark:bg-black">
             <form onSubmit={handleSubmit} className="bg-white dark:bg-black p-6 rounded-md shadow-md text-gray-900 dark:text-gray-100 w-full max-w-2xl">
                 <div className="space-y-12">
                     <div className="border-b border-gray-300 dark:border-gray-700 pb-12">
-                        <h2 className="text-base font-semibold">Header Section</h2>
-                        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                            This info appears at the top of your resume: your name, contact, and project links.
-                        </p>
+                        <h2 className="text-2xl font-bold mb-6 text-center">Header</h2>
 
                         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                             {/* First Name */}
