@@ -7,6 +7,7 @@ import ProjectForm from '@/forms/ProjectForm';
 import EducationForm from '@/forms/EducationForm';
 import SkillForm from '@/forms/SkillForm';
 import DownloadForm from '@/forms/DownloadForm';
+import PreviewPage from './PreviewPage';
 
 export default function ViewPage() {
     return (
@@ -17,9 +18,10 @@ export default function ViewPage() {
                 <ProjectForm />
                 <EducationForm />
                 <SkillForm />
+                <DownloadForm />
             </div>
             <div className='grow'>
-                <DownloadForm />
+                <PreviewPage />
             </div>
         </div>
     );

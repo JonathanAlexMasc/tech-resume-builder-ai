@@ -68,9 +68,7 @@ export default function HeaderForm() {
             },
         });
 
-        if (res.ok) {
-            router.push(`/resume/experience?resumeId=${resumeId}`);
-        } else {
+        if (!res.ok) {
             console.error('Error saving data');
         }
     };

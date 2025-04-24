@@ -19,9 +19,30 @@ export default function HomePage() {
             const res = await fetch('/api/resume', { method: 'POST' });
             if (!res.ok) throw new Error('Failed to create resume');
             const data = await res.json();
-            router.push(`/resume/header?resumeId=${data.resume.id}`);
+            // generate resume init in backend
+            generateResume(data.resume.id);
+            router.push(`/resume/collection?resumeId=${data.resume.id}`);
         } catch (err) {
             console.error('Error creating resume:', err);
+        }
+    };
+
+    const generateResume = async (resumeId) => {
+        try {
+            const res = await fetch(`/api/resume/compile`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ resumeId }),
+            });
+
+            if (!res.ok) {
+                const text = await res.text(); // read raw HTML or plain text once
+                console.error('Unexpected error response:', text);
+                throw new Error('Resume generation failed with non-JSON error.');
+            }
+        } catch (error) {
+            console.error('Error generating resume:', error);
+            alert(error.message || 'An unexpected error occurred.');
         }
     };
 
