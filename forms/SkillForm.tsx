@@ -106,10 +106,10 @@ export default function SkillForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6 max-w-xl mx-auto py-8">
-            <h2 className="text-lg font-semibold">Add Your Skills</h2>
+        <form onSubmit={handleSubmit} className="flex flex-col items-center space-y-6 py-8">
+            <h2 className="text-2xl font-bold mb-6 text-center">Skills</h2>
 
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 w-full items-center justify-center">
                 {skills.map((skill, index) => (
                     <div key={skill.id || index} className="w-full sm:w-[48%] md:w-[31%] border border-gray-300 dark:border-gray-700 p-4 rounded-md space-y-4">
                         <div className="flex items-center justify-between">
@@ -177,9 +177,6 @@ export default function SkillForm() {
             </div>
 
             <div className="mt-6 flex items-center justify-end gap-x-6">
-                <button onClick={() => router.back()} type="button" className="text-sm font-semibold text-gray-900 dark:text-white mr-2">
-                    Back
-                </button>
                 <button
                     type="submit"
                     className="rounded-md bg-indigo-600 text-white px-4 py-2 hover:bg-indigo-500"
