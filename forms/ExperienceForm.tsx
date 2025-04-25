@@ -213,7 +213,7 @@ export default function ExperienceForm() {
     }
 
     return (
-        <div className="min-h-screen px-4 py-8 bg-white dark:bg-black text-gray-900 dark:text-gray-100">
+        <div className="px-4 py-8 bg-white dark:bg-black text-gray-900 dark:text-gray-100">
             <h2 className="text-2xl font-bold mb-6 text-center">Experience</h2>
 
             {experiences.length === 0 && (
@@ -410,21 +410,6 @@ export default function ExperienceForm() {
                     </button>
                 </div>
             )}
-
-            <div className="flex justify-end mt-8 max-w-2xl mx-auto">
-                <button
-                    onClick={() => router.back()}
-                    className="rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-600 mr-3"
-                >
-                    Back
-                </button>
-                <button
-                    onClick={() => router.push(`/resume/projects?resumeId=${resumeId}`)}
-                    className="rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-600"
-                >
-                    Continue to Projects
-                </button>
-            </div>
         </div>
     );
 }

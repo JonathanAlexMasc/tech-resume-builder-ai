@@ -110,7 +110,7 @@ export default function EducationForm() {
     }
 
     return (
-        <div className="min-h-screen px-4 py-8 bg-white dark:bg-black text-gray-900 dark:text-gray-100">
+        <div className="px-4 py-8 bg-white dark:bg-black text-gray-900 dark:text-gray-100">
             <h2 className="text-2xl font-bold mb-6 text-center">Education</h2>
 
             {educations.length === 0 && (
@@ -209,31 +209,6 @@ export default function EducationForm() {
                     </button>
                 </div>
             )}
-
-            <div className="flex justify-end mt-8 max-w-2xl mx-auto">
-                <button
-                    onClick={() => router.back()}
-                    className="rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-600 mr-3"
-                >
-                    Back
-                </button>
-                <button
-                    onClick={() => {
-                        if (educations.length === 0) {
-                            alert('Please add at least one education entry before continuing.');
-                            return;
-                        }
-                        router.push(`/resume/download?resumeId=${resumeId}`);
-                    }}
-                    disabled={educations.length === 0}
-                    className={`rounded-md px-4 py-2 text-sm font-semibold text-white ${educations.length === 0
-                            ? 'bg-gray-400 cursor-not-allowed'
-                            : 'bg-gray-700 hover:bg-gray-600'
-                        }`}
-                >
-                    Finish
-                </button>
-            </div>
         </div>
     );
 }

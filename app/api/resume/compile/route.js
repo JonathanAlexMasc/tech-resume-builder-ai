@@ -100,13 +100,18 @@ export async function POST(req) {
 
             const pdfBuffer = Buffer.from(await res.arrayBuffer());
 
-            return new Response(pdfBuffer, {
-                status: 200,
-                headers: {
-                    'Content-Type': 'application/pdf',
-                    'Content-Disposition': 'attachment; filename=resume.pdf'
-                }
-            });
+            const logsDir = process.env.NODE_ENV === 'development'
+                ? path.join('logs')
+                : path.join('/tmp', 'logs');
+
+            if (!existsSync(logsDir)) {
+                mkdirSync(logsDir);
+            }
+
+            const pdfPath = path.join(logsDir, `resume-${resumeId}.pdf`);
+            writeFileSync(pdfPath, pdfBuffer);
+
+            return new Response(null, { status: 204 });
         })
         .catch((err) => {
             logErrorToFile(`Railway API Request Failed: ${err.message}`);

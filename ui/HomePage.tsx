@@ -19,9 +19,30 @@ export default function HomePage() {
             const res = await fetch('/api/resume', { method: 'POST' });
             if (!res.ok) throw new Error('Failed to create resume');
             const data = await res.json();
-            router.push(`/resume/header?resumeId=${data.resume.id}`);
+            // generate resume init in backend
+            generateResume(data.resume.id);
+            router.push(`/resume/collection?resumeId=${data.resume.id}`);
         } catch (err) {
             console.error('Error creating resume:', err);
+        }
+    };
+
+    const generateResume = async (resumeId) => {
+        try {
+            const res = await fetch(`/api/resume/compile`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ resumeId }),
+            });
+
+            if (!res.ok) {
+                const text = await res.text(); // read raw HTML or plain text once
+                console.error('Unexpected error response:', text);
+                throw new Error('Resume generation failed with non-JSON error.');
+            }
+        } catch (error) {
+            console.error('Error generating resume:', error);
+            alert(error.message || 'An unexpected error occurred.');
         }
     };
 
@@ -97,7 +118,7 @@ export default function HomePage() {
                         <li
                             key={resume.id}
                             className="flex justify-between gap-x-6 my-3 p-5 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition-all duration-200 cursor-pointer"
-                            onClick={() => router.push(`/resume/header?resumeId=${resume.id}`)}
+                            onClick={() => router.push(`/resume/collection?resumeId=${resume.id}`)}
                         >
                             <div className="min-w-0 flex-auto">
                                 {editingId === resume.id ? (
