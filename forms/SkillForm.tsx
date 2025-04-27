@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { compileResume } from '@/lib/compileResume';
 
 export default function SkillForm() {
     const router = useRouter();
@@ -89,10 +90,12 @@ export default function SkillForm() {
         );
 
         if (responses.every(res => res.ok)) {
-            router.push(`/resume/education?resumeId=${resumeId}`);
+            
         } else {
             alert('Some skills failed to save');
         }
+
+        compileResume(resumeId);
     };
 
     if (loading) {
@@ -128,7 +131,7 @@ export default function SkillForm() {
                             )}
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div className="flex flex-col text-sm">
                             <label>
                                 <input
                                     type="checkbox"

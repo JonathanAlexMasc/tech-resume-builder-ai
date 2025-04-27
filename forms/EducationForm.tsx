@@ -76,6 +76,7 @@ export default function EducationForm() {
         }
 
         setEducations(educations.filter((_, i) => i !== index));
+        compileResume(resumeId);
     };
 
     const handleSubmit = async (e, edu, index) => {
