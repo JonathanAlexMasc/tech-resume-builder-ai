@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowPathIcon } from '@heroicons/react/24/solid';
+import { compileResume } from '@/lib/compileResume';
 
 export default function HeaderForm() {
     const router = useRouter();
@@ -70,6 +71,10 @@ export default function HeaderForm() {
 
         if (!res.ok) {
             console.error('Error saving data');
+        }
+
+        else {
+            compileResume(resumeId);
         }
     };
 

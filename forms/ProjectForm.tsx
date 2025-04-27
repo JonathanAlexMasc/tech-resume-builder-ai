@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { compileResume } from '@/lib/compileResume';
 
 export default function ProjectForm() {
     const router = useRouter();
@@ -107,6 +108,7 @@ export default function ProjectForm() {
         }
 
         setProjects(projects.filter((_, i) => i !== index));
+        compileResume(resumeId);
     };
 
     const handleSubmit = async (e, proj, index) => {
@@ -171,6 +173,10 @@ export default function ProjectForm() {
 
         if (!bulletRes.every((res) => res.ok)) {
             return alert('Some bullet points failed to save');
+        }
+
+        else {
+            compileResume(resumeId);
         }
     };
 

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { compileResume } from '@/lib/compileResume';
 
 export default function ExperienceForm() {
     const router = useRouter();
@@ -138,6 +139,7 @@ export default function ExperienceForm() {
         }
 
         setExperiences(experiences.filter((_, i) => i !== index));
+        compileResume(resumeId);
     };
 
     const handleSubmit = async (e, exp, index) => {
@@ -200,6 +202,8 @@ export default function ExperienceForm() {
         if (!bulletRes.every((res) => res.ok)) {
             return alert('Some bullet points failed to save');
         }
+
+        compileResume(resumeId);
     };
 
     if (loading) {
