@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { compileResume } from '@/lib/compileResume';
 
 export default function EducationForm() {
     const router = useRouter();
@@ -75,6 +76,7 @@ export default function EducationForm() {
         }
 
         setEducations(educations.filter((_, i) => i !== index));
+        compileResume(resumeId);
     };
 
     const handleSubmit = async (e, edu, index) => {
@@ -97,6 +99,8 @@ export default function EducationForm() {
         });
 
         if (!res.ok) return alert('Failed to save education');
+
+        compileResume(resumeId);
     };
 
     if (loading) {
