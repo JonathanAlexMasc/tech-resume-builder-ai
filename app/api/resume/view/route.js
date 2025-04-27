@@ -27,7 +27,7 @@ export async function GET(req) {
             },
         });
     } catch (e) {
-        return new Response(JSON.stringify({ error: 'PDF not found. Compile it first.' }), {
+        return new Response(JSON.stringify({ error: 'PDF not found. Compile it first by refreshing this page.' }), {
             status: 404,
             headers: { 'Content-Type': 'application/json' }
         });
