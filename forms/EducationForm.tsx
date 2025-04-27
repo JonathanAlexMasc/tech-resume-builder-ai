@@ -144,7 +144,7 @@ export default function EducationForm() {
                             onChange={(e) => handleChange(index, 'school', e.target.value)}
                             placeholder="School/University"
                             required
-                            className="rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                            className="rounded-md px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300"
                         />
                         <input
                             type="text"
@@ -153,7 +153,7 @@ export default function EducationForm() {
                             onChange={(e) => handleChange(index, 'location', e.target.value)}
                             placeholder="Location"
                             required
-                            className="rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                            className="rounded-md px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300"
                         />
                         <input
                             type="month"
@@ -161,14 +161,14 @@ export default function EducationForm() {
                             value={edu.startDate}
                             onChange={(e) => handleChange(index, 'startDate', e.target.value)}
                             required
-                            className="rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                            className="rounded-md px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300"
                         />
                         <input
                             type="month"
                             name="endDate"
                             value={edu.endDate}
                             onChange={(e) => handleChange(index, 'endDate', e.target.value)}
-                            className="rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                            className="rounded-md px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300"
                         />
                     </div>
 
@@ -181,7 +181,7 @@ export default function EducationForm() {
                             onChange={(e) => handleChange(index, 'major', e.target.value)}
                             placeholder="Computer Science"
                             required
-                            className="rounded-md px-3 py-2 bg-white dark:bg-gray-800 w-full"
+                            className="rounded-md px-3 py-2 bg-white dark:bg-gray-800 w-full border border-gray-300"
                         />
                     </div>
 

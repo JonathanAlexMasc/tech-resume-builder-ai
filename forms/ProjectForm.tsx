@@ -246,7 +246,7 @@ export default function ProjectForm() {
                         onChange={(e) => handleTitleChange(index, e.target.value)}
                         placeholder="e.g. AI Resume Builder"
                         required
-                        className="w-full rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                        className="w-full rounded-md px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300"
                     />
 
                     <div>
@@ -260,7 +260,7 @@ export default function ProjectForm() {
                                             onChange={(e) => handleBulletChange(index, i, e.target.value)}
                                             placeholder={`Bullet point ${i + 1}`}
                                             required
-                                            className="flex-grow rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                                            className="flex-grow rounded-md px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700"
                                         />
                                         {proj.bulletPoints.length > 1 && (
                                             <button

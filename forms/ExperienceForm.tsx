@@ -253,7 +253,7 @@ export default function ExperienceForm() {
                                 onChange={(e) => handleChange(index, 'role', e.target.value)}
                                 placeholder="e.g. Software Engineer"
                                 required
-                                className="rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                                className="rounded-md px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300"
                             />
                         </div>
 
@@ -270,7 +270,7 @@ export default function ExperienceForm() {
                                 onChange={(e) => handleChange(index, 'company', e.target.value)}
                                 placeholder="e.g. Amazon"
                                 required
-                                className="rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                                className="rounded-md px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300"
                             />
                         </div>
 
@@ -287,7 +287,7 @@ export default function ExperienceForm() {
                                 onChange={(e) => handleChange(index, 'location', e.target.value)}
                                 placeholder="e.g. New York, NY"
                                 required
-                                className="rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                                className="rounded-md px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300"
                             />
                         </div>
 
@@ -303,7 +303,7 @@ export default function ExperienceForm() {
                                 value={exp.startDate}
                                 onChange={(e) => handleChange(index, 'startDate', e.target.value)}
                                 required
-                                className="rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                                className="rounded-md px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300"
                             />
                         </div>
 
@@ -318,7 +318,7 @@ export default function ExperienceForm() {
                                 name="endDate"
                                 value={exp.endDate}
                                 onChange={(e) => handleChange(index, 'endDate', e.target.value)}
-                                className="rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                                className="rounded-md px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300"
                             />
                         </div>
                     </div>
@@ -334,7 +334,7 @@ export default function ExperienceForm() {
                                             onChange={(e) => handleBulletChange(index, i, e.target.value)}
                                             placeholder={`Bullet point ${i + 1}`}
                                             required
-                                            className="flex-grow rounded-md px-3 py-2 bg-white dark:bg-gray-800"
+                                            className="flex-grow rounded-md px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700"
                                         />
                                         {exp.bulletPoints.length > 1 && (
                                             <button
