@@ -2,7 +2,7 @@
 
 import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { compileResume } from '@/lib/compileResume'; // 👈 import your helper here
+import { compileResume } from '@/lib/compileResume';
 
 export default function PreviewPage() {
     const searchParams = useSearchParams();
@@ -10,6 +10,7 @@ export default function PreviewPage() {
     const resumeId = resumeIdParam ? parseInt(resumeIdParam, 10) : null;
     const [reloadKey, setReloadKey] = useState(Date.now());
     const [hasCompiledOnce, setHasCompiledOnce] = useState(false);
+    const [readyToShow, setReadyToShow] = useState(false); // 👈 new
 
     const reloadResume = () => {
         setReloadKey(Date.now());
@@ -17,21 +18,20 @@ export default function PreviewPage() {
 
     const generateResume = async () => {
         if (resumeId) {
-            await compileResume(resumeId); // 👈 call your helper
+            await compileResume(resumeId);
             setHasCompiledOnce(true);
+            setReadyToShow(true); // 👈 allow iframe to show now
         } else {
             alert('Missing resume ID');
         }
     };
 
-    // Auto-generate first time
     useEffect(() => {
         if (resumeId && !hasCompiledOnce) {
             generateResume();
         }
     }, [resumeId]);
 
-    // Broadcast listener
     useEffect(() => {
         if (!resumeId) return;
 
@@ -42,6 +42,7 @@ export default function PreviewPage() {
             if (type === 'compiled' && incomingResumeId === resumeId) {
                 console.log('🔄 Detected compile for this resume, reloading iframe...');
                 reloadResume();
+                setReadyToShow(true); // 👈 after recompile, allow showing again
             }
         };
 
@@ -53,7 +54,7 @@ export default function PreviewPage() {
     return (
         <div className="flex flex-col">
             <div style={{ height: '100vh', width: '100%' }}>
-                {resumeId && (
+                {resumeId && readyToShow && ( // 👈 only render iframe when ready
                     <iframe
                         key={reloadKey}
                         src={`/api/resume/view?resumeId=${resumeId}&t=${reloadKey}`}
