@@ -11,7 +11,7 @@ import Download from "@/components/Download";
 
 export default function Page() {
   return (
-    <div className="flex flex-col min-h-screen bg-white dark:bg-black">
+    <div className="flex flex-col min-h-screen dark:bg-black bg-gray-100">
       <Header />
       <main>
         <Hero />
@@ -44,7 +44,7 @@ export default function Page() {
           rightHalf={
             <div className="flex flex-col justify-end">
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-900 dark:text-white mb-4">
-                AI-Powered. ATS-Optimized. LaTeX-Perfect.
+                AI-Powered. ATS-Optimized.
               </h2>
               <p className="text-xl font-light">
                 Explore the features that make our resume builder stand out — from intelligent bullet point generation
