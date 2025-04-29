@@ -18,6 +18,7 @@ Please suggest 2 improved resume bullet points:
 - Use strong action verbs
 - Be concise and measurable
 - Do not repeat output
+- Do not make up numbers
 Return only the improved bullet points, one per line. Don't include any dashes in the beginning.
 `;
 
